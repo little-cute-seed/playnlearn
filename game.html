@@ -1,214 +1,614 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Play & Learn</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            user-select: none;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>餵食小屁豬 - Game 1</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: 'Fredoka', 'Chalkboard SE', 'Comic Sans MS', sans-serif;
+    }
 
-        body {
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Fredoka', cursive, sans-serif;
-            background: #E2F0FF;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #fff0f5;
+    }
 
-        .header {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+    /* Page View Controller */
+    .view {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 15px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
 
-        .home-btn {
-            background: #ffffff;
-            color: #1E293B;
-            text-decoration: none;
-            padding: 10px 18px;
-            border-radius: 20px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            transition: transform 0.1s ease;
-        }
+    .active-view {
+      display: flex !important;
+    }
 
-        .home-btn:active {
-            transform: scale(0.95);
-        }
+    /* Buttons */
+    .btn-large {
+      font-size: 32px;
+      font-weight: bold;
+      padding: 15px 40px;
+      background-color: #ff4757;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      box-shadow: 0 8px 0 #d63031;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
 
-        .game-card {
-            background: #FFFFFF;
-            padding: 30px;
-            border-radius: 28px;
-            max-width: 600px;
-            width: 100%;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            text-align: center;
-        }
+    .btn-large:active {
+      transform: translateY(4px);
+      box-shadow: 0 4px 0 #d63031;
+    }
 
-        .image-display {
-            font-size: 80px;
-            margin-bottom: 10px;
-        }
+    /* --- 1. Start View --- */
+    #startView {
+      justify-content: center;
+      gap: 30px;
+      background: linear-gradient(135deg, #ff9ff3, #feca57);
+    }
 
-        .hint-text {
-            font-size: 18px;
-            color: #64748B;
-            margin-bottom: 5px;
-            font-style: italic;
-        }
+    .title-box {
+      text-align: center;
+      color: white;
+      text-shadow: 3px 3px 0 #ff6b6b;
+    }
 
-        .prompt-text {
-            font-size: 32px;
-            font-weight: 900;
-            color: #1E293B;
-            margin: 10px 0 30px 0;
-            line-height: 1.3;
-        }
+    .title-box h1 { font-size: 3.5rem; }
+    .title-box p { font-size: 1.5rem; margin-top: 10px; }
 
-        .options-grid {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
+    .big-pig-avatar {
+      font-size: 8rem;
+      animation: pulse 1.5s infinite;
+    }
 
-        .option-btn {
-            background: #EEF4FF;
-            color: #4F46E5;
-            border: 3px solid #818CF8;
-            font-size: 22px;
-            font-weight: bold;
-            padding: 16px 28px;
-            border-radius: 20px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15);
-            transition: all 0.15s ease;
-        }
+    /* --- 2. Quiz View --- */
+    #quizView {
+      background-color: #f7d794;
+    }
 
-        .option-btn:hover {
-            background: #4F46E5;
-            color: #FFFFFF;
-            transform: translateY(-2px);
-        }
+    .header-bar {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
 
-        .option-btn:active {
-            transform: scale(0.95);
-        }
+    .header-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #2c3e50;
+      white-space: nowrap;
+    }
 
-        .progress-text {
-            margin-top: 25px;
-            font-size: 14px;
-            color: #64748B;
-            font-weight: bold;
-        }
-    </style>
+    /* Pink Progress Bar */
+    .progress-container {
+      flex: 1;
+      height: 22px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      margin: 0 12px;
+      overflow: hidden;
+      border: 3px solid #f8a5c2;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background-color: #ff4757; /* Pink / Coral Pink */
+      transition: width 0.3s ease;
+      border-radius: 10px;
+    }
+
+    .home-btn {
+      font-size: 18px;
+      padding: 6px 14px;
+      border-radius: 12px;
+      border: none;
+      background-color: white;
+      box-shadow: 0 3px 0 #ccc;
+      cursor: pointer;
+    }
+
+    /* Question Box with 100px Emoji */
+    .question-box {
+      text-align: center;
+      background: white;
+      padding: 15px 25px;
+      border-radius: 24px;
+      box-shadow: 0 6px 0 #f5cd79;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 90%;
+      max-width: 480px;
+      margin: 10px 0 15px 0; /* Clear margins top and bottom */
+    }
+
+    .question-text {
+      font-size: 24px;
+      font-weight: bold;
+      color: #303952;
+    }
+
+    /* 100px Sized Question Visual / Emoji */
+    .question-emoji {
+      font-size: 100px;
+      line-height: 100px;
+      height: 100px;
+    }
+
+    .audio-btn {
+      font-size: 22px;
+      background: #78e08f;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 0 #b8e994;
+    }
+
+    /* Piggy Target Zone */
+    .pig-target-zone {
+      width: 180px;
+      height: 180px;
+      background-color: #f8a5c2;
+      border: 5px dashed #f78fb3;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: transform 0.2s;
+      margin: 10px 0 15px 0; /* Clear margins */
+    }
+
+    .pig-target-zone.drag-over {
+      transform: scale(1.15);
+      background-color: #f78fb3;
+    }
+
+    .pig-face {
+      font-size: 5.5rem;
+      transition: all 0.2s;
+    }
+
+    .pig-eating {
+      transform: scale(1.2);
+    }
+
+    /* Success Pop-up Text "Yeah!" */
+    .yummy-text {
+      position: absolute;
+      top: -35px;
+      font-size: 44px;
+      font-weight: 900;
+      color: #ff4757;
+      opacity: 0;
+      transition: all 0.3s ease-out;
+      text-shadow: 2px 2px white, 0 0 10px rgba(255, 71, 87, 0.4);
+    }
+
+    .yummy-text.show {
+      opacity: 1;
+      transform: translateY(-15px) scale(1.2);
+    }
+
+    /* 3 Options Container (42px Font Size) */
+    .options-container {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      width: 100%;
+      max-width: 500px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      min-height: 95px;
+    }
+
+    .option-card {
+      flex: 1;
+      max-width: 130px;
+      height: 90px;
+      background-color: #ffffff;
+      border: 4px solid #54a0ff;
+      border-radius: 20px;
+      box-shadow: 0 6px 0 #2e86de;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px; /* Fixed 42px font size */
+      font-weight: bold;
+      color: #2c3e50;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .option-card:active {
+      cursor: grabbing;
+    }
+
+    /* --- 3. End View --- */
+    #endView {
+      background: linear-gradient(180deg, #ff9ff3 0%, #54a0ff 100%);
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      z-index: 2;
+    }
+
+    #confettiCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .victory-content {
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .giant-trophy {
+      font-size: 8rem;
+      animation: trophyFloat 2s infinite ease-in-out;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+    }
+
+    .victory-title {
+      font-size: 3rem;
+      color: #fff200;
+      text-shadow: 4px 4px 0 #ff3838;
+      margin: 10px 0;
+    }
+
+    .final-score-box {
+      font-size: 2rem;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px 30px;
+      border-radius: 30px;
+      color: #2c3e50;
+      font-weight: bold;
+      margin-bottom: 25px;
+    }
+
+    .end-buttons {
+      display: flex;
+      gap: 20px;
+      z-index: 4;
+    }
+
+    .btn-home {
+      background-color: #10ac84;
+      box-shadow: 0 8px 0 #0f9675;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    @keyframes trophyFloat {
+      0%, 100% { transform: translateY(0) rotate(-3deg); }
+      50% { transform: translateY(-15px) rotate(3deg); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-12px); }
+      40%, 80% { transform: translateX(12px); }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="header">
-        <a href="./index.html" class="home-btn">⬅️ Home</a>
-        <h2 id="game-title" style="color: #2C3E50; margin: 0;">Loading...</h2>
+  <!-- 1. Start View -->
+  <div id="startView" class="view active-view">
+    <div class="title-box">
+      <h1>🐷 餵食小屁豬 🍌</h1>
+      <p>Help feed piggy by choosing the right answer!</p>
+    </div>
+    <div class="big-pig-avatar">🐷</div>
+    <button class="btn-large" onclick="startGame()">START</button>
+  </div>
+
+  <!-- 2. Game View -->
+  <div id="quizView" class="view">
+    <!-- Header with "餵食小屁豬 (1/10)" & Pink Progress Bar -->
+    <div class="header-bar">
+      <button class="home-btn" onclick="location.href='index.html'">🏠 Home</button>
+      <div class="progress-container">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <div id="headerTitle" class="header-title">餵食小屁豬 (1/10)</div>
     </div>
 
-    <div class="game-card">
-        <div id="image-display" class="image-display"></div>
-        <div id="hint-text" class="hint-text"></div>
-        <div id="prompt-text" class="prompt-text"></div>
-        <div id="options-container" class="options-grid"></div>
-        <div id="progress" class="progress-text"></div>
+    <!-- Question Box with 100px Big Visual Emoji -->
+    <div class="question-box">
+      <div id="questionEmoji" class="question-emoji">🍌</div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div id="questionText" class="question-text">Can you find the Banana?</div>
+        <button class="audio-btn" onclick="speakQuestion()">🔊</button>
+      </div>
     </div>
 
-    <script>
-        let currentQuestions = [];
-        let currentIndex = 0;
+    <!-- Piggy Target Zone -->
+    <div id="pigTarget" class="pig-target-zone">
+      <div id="yummyText" class="yummy-text">Yeah! 🎉</div>
+      <div id="pigFace" class="pig-face">🐷</div>
+    </div>
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedGameId = parseInt(urlParams.get('game')) || 1;
+    <!-- 3 Choice Cards -->
+    <div class="options-container" id="optionsContainer"></div>
+  </div>
 
-        fetch('./data.json')
-            .then(res => {
-                if (!res.ok) throw new Error("Could not find data.json");
-                return res.json();
-            })
-            .then(data => {
-                const gameData = data.games.find(g => g.game_id === selectedGameId);
+  <!-- 3. Victory View -->
+  <div id="endView" class="view">
+    <canvas id="confettiCanvas"></canvas>
+    <div class="victory-content">
+      <div class="giant-trophy">🏆</div>
+      <div style="font-size: 3.5rem;">🐷✨</div>
+      <h1 class="victory-title">GREAT JOB!</h1>
+      <div class="final-score-box">小屁豬吃飽了！</div>
+      <div class="end-buttons">
+        <button class="btn-large" onclick="startGame()">Play Again 🔄</button>
+        <button class="btn-large btn-home" onclick="location.href='index.html'">Home 🏠</button>
+      </div>
+    </div>
+  </div>
 
-                if (!gameData) {
-                    document.getElementById('game-title').innerText = "Game Not Found";
-                    return;
-                }
+  <script>
+    // Game 1 Bank: 10 Questions with 3 Emoji Options each (Phonics/Hints removed)
+    const questionsBank = [
+      { q: "Can you find the Banana?", emoji: "🍌", correct: "🍌", wrong: ["🍎", "🍇"] },
+      { q: "Can you find the Doughnut?", emoji: "🍩", correct: "🍩", wrong: ["🍞", "🍕"] },
+      { q: "Can you find the Carrot?", emoji: "🥕", correct: "🥕", wrong: ["🌽", "🥦"] },
+      { q: "Can you find the Ice Cream?", emoji: "🍦", correct: "🍦", wrong: ["🍰", "🍭"] },
+      { q: "Can you find the Milk?", emoji: "🥛", correct: "🥛", wrong: ["🧃", "☕"] },
+      { q: "Can you find the Strawberry?", emoji: "🍓", correct: "🍓", wrong: ["🍒", "🍉"] },
+      { q: "Can you find the Watermelon?", emoji: "🍉", correct: "🍉", wrong: ["🍍", "🍊"] },
+      { q: "Can you find the Bread?", emoji: "🍞", correct: "🍞", wrong: ["🍳", "🥞"] },
+      { q: "Can you find the Apple?", emoji: "🍎", correct: "🍎", wrong: ["🍋", "🍐"] },
+      { q: "Can you find the Grapes?", emoji: "🍇", correct: "🍇", wrong: ["🥝", "🍑"] }
+    ];
 
-                document.getElementById('game-title').innerText = gameData.name;
-                currentQuestions = gameData.questions;
-                currentIndex = 0;
-                renderQuestion();
-            })
-            .catch(err => {
-                console.error("Path Error:", err);
-                document.getElementById('game-title').innerText = "Error Loading Game";
-            });
+    let currentIdx = 0;
+    let draggedElement = null;
 
-        function renderQuestion() {
-            if (currentIndex >= currentQuestions.length) {
-                document.getElementById('image-display').innerText = "🎉";
-                document.getElementById('hint-text').innerText = "";
-                document.getElementById('prompt-text').innerText = "Level Complete!";
-                document.getElementById('options-container').innerHTML = `
-                    <a href="./index.html" class="home-btn" style="font-size: 20px; padding: 12px 24px;">Play Again</a>
-                `;
-                document.getElementById('progress').innerText = "";
-                return;
-            }
+    function speakQuestion() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const q = questionsBank[currentIdx];
+        const msg = new SpeechSynthesisUtterance(q.q);
+        msg.lang = 'en-US';
+        msg.rate = 0.9;
+        window.speechSynthesis.speak(msg);
+      }
+    }
 
-            const q = currentQuestions[currentIndex];
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = '';
+    function switchView(viewId) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
+      document.getElementById(viewId).classList.add('active-view');
+    }
 
-            let correctAnswer;
+    function startGame() {
+      currentIdx = 0;
+      switchView('quizView');
+      loadQuestion();
+    }
 
-            if (q.sequence) {
-                // Game 3 Math logic
-                document.getElementById('image-display').innerText = "🚀";
-                document.getElementById('hint-text').innerText = "";
-                document.getElementById('prompt-text').innerText = q.sequence.join(" ");
-                correctAnswer = q.answer;
-            } else {
-                // Game 1 & 2 English logic
-                document.getElementById('image-display').innerText = q.image || "";
-                document.getElementById('hint-text').innerText = q.hint || "";
-                document.getElementById('prompt-text').innerText = q.sentence || q.word || "";
-                correctAnswer = q.word;
-            }
+    function loadQuestion() {
+      if (currentIdx >= 10) {
+        showEndVictoryPage();
+        return;
+      }
 
-            q.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = opt;
-                btn.onclick = () => checkAnswer(opt, correctAnswer);
-                optionsContainer.appendChild(btn);
-            });
+      // Update Header Title "餵食小屁豬 (1/10)"
+      document.getElementById('headerTitle').innerText = `餵食小屁豬 (${currentIdx + 1}/10)`;
+      document.getElementById('progressFill').style.width = `${((currentIdx) / 10) * 100}%`;
 
-            document.getElementById('progress').innerText = `Question ${currentIndex + 1} of ${currentQuestions.length}`;
+      const q = questionsBank[currentIdx];
+      document.getElementById('questionText').innerText = q.q;
+      document.getElementById('questionEmoji').innerText = q.emoji;
+      
+      speakQuestion();
+
+      // Create 3 Options array (1 Correct + 2 Wrong) and shuffle
+      const options = [
+        { text: q.correct, isCorrect: true },
+        { text: q.wrong[0], isCorrect: false },
+        { text: q.wrong[1], isCorrect: false }
+      ].sort(() => Math.random() - 0.5);
+
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = '';
+
+      options.forEach((opt) => {
+        const card = document.createElement('div');
+        card.className = 'option-card';
+        card.innerText = opt.text;
+        card.draggable = true;
+        card.dataset.isCorrect = opt.isCorrect;
+
+        card.onclick = () => checkAnswer(opt.isCorrect, card);
+
+        card.ondragstart = (e) => {
+          draggedElement = card;
+          e.dataTransfer.setData('text/plain', opt.isCorrect);
+        };
+
+        bindTouchEvents(card, opt.isCorrect);
+        container.appendChild(card);
+      });
+    }
+
+    // Touch Drag Support for Mobile
+    function bindTouchEvents(elem, isCorrect) {
+      elem.ontouchstart = (e) => {
+        const touch = e.touches[0];
+        elem.style.position = 'fixed';
+        elem.style.zIndex = '1000';
+        elem.style.left = `${touch.clientX - 60}px`;
+        elem.style.top = `${touch.clientY - 45}px`;
+      };
+
+      elem.ontouchmove = (e) => {
+        const touch = e.touches[0];
+        elem.style.left = `${touch.clientX - 60}px`;
+        elem.style.top = `${touch.clientY - 45}px`;
+      };
+
+      elem.ontouchend = (e) => {
+        const touch = e.changedTouches[0];
+        const pigTarget = document.getElementById('pigTarget').getBoundingClientRect();
+
+        elem.style.position = 'static';
+        elem.style.zIndex = 'auto';
+
+        if (
+          touch.clientX >= pigTarget.left &&
+          touch.clientX <= pigTarget.right &&
+          touch.clientY >= pigTarget.top &&
+          touch.clientY <= pigTarget.bottom
+        ) {
+          checkAnswer(isCorrect, elem);
         }
+      };
+    }
 
-        function checkAnswer(selected, correct) {
-            if (String(selected) === String(correct)) {
-                currentIndex++;
-                renderQuestion();
-            } else {
-                alert("❌ Try again!");
-            }
+    // Pig Target Drop Listeners
+    const pigTarget = document.getElementById('pigTarget');
+
+    pigTarget.ondragover = (e) => {
+      e.preventDefault();
+      pigTarget.classList.add('drag-over');
+    };
+
+    pigTarget.ondragleave = () => {
+      pigTarget.classList.remove('drag-over');
+    };
+
+    pigTarget.ondrop = (e) => {
+      e.preventDefault();
+      pigTarget.classList.remove('drag-over');
+      if (draggedElement) {
+        const isCorrect = draggedElement.dataset.isCorrect === 'true';
+        checkAnswer(isCorrect, draggedElement);
+      }
+    };
+
+    function checkAnswer(isCorrect, elem) {
+      if (isCorrect) {
+        const pigFace = document.getElementById('pigFace');
+        const yummyText = document.getElementById('yummyText');
+
+        pigFace.innerText = '😮';
+        pigFace.classList.add('pig-eating');
+        yummyText.classList.add('show');
+
+        setTimeout(() => { pigFace.innerText = '😋'; }, 300);
+
+        setTimeout(() => {
+          pigFace.innerText = '🐷';
+          pigFace.classList.remove('pig-eating');
+          yummyText.classList.remove('show');
+          currentIdx++;
+          loadQuestion();
+        }, 1200);
+
+      } else {
+        elem.style.animation = 'shake 0.4s';
+        setTimeout(() => elem.style.animation = '', 400);
+      }
+    }
+
+    function showEndVictoryPage() {
+      document.getElementById('progressFill').style.width = '100%';
+      switchView('endView');
+      startConfetti();
+    }
+
+    /* Confetti Animation */
+    function startConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const confettiCount = 150;
+      const confetti = [];
+      const colors = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#2e86de', '#ff9ff3'];
+
+      for (let i = 0; i < confettiCount; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 12 + 8,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          speedY: Math.random() * 5 + 3,
+          speedX: Math.random() * 2 - 1,
+          angle: Math.random() * 360,
+          spin: Math.random() * 0.2 - 0.1
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        confetti.forEach((p) => {
+          p.y += p.speedY;
+          p.x += p.speedX;
+          p.angle += p.spin;
+
+          if (p.y > canvas.height) p.y = -20;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.angle);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+        });
+
+        if (document.getElementById('endView').classList.contains('active-view')) {
+          requestAnimationFrame(render);
         }
-    </script>
+      }
+      render();
+    }
+  </script>
 </body>
 </html>
