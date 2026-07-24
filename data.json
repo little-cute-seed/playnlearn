@@ -1,1 +1,77 @@
-
+{
+  "games": [
+    {
+      "game_id": 1,
+      "name": "Level 1: 餵食小屁豬",
+      "icon": "🐷",
+      "themeColor": "#9C82FA",
+      "isHot": true,
+      "tags": ["Phonics & Vocabulary", "拼音發音", "Animals", "動物認知"],
+      "description": "Listen and feed the hungry pig! 選出正確的動物單字餵食小屁豬！",
+      "questions": [
+        { "image": "🐱", "word": "CAT", "hint": "/kæt/", "options": ["CAT", "DOG", "PIG"] },
+        { "image": "🐶", "word": "DOG", "hint": "/dɒɡ/", "options": ["CAT", "DOG", "DUCK"] },
+        { "image": "🐷", "word": "PIG", "hint": "/pɪɡ/", "options": ["PIG", "COW", "BEAR"] },
+        { "image": "🐮", "word": "COW", "hint": "/kaʊ/", "options": ["COW", "PIG", "SHEEP"] },
+        { "image": "🐻", "word": "BEAR", "hint": "/beər/", "options": ["BEAR", "LION", "CAT"] },
+        { "image": "🐰", "word": "RABBIT", "hint": "/ˈræb.ɪt/", "options": ["RABBIT", "DOG", "FROG"] },
+        { "image": "🐸", "word": "FROG", "hint": "/frɒɡ/", "options": ["FROG", "FISH", "BIRD"] },
+        { "image": "🐥", "word": "CHICK", "hint": "/tʃɪk/", "options": ["CHICK", "DUCK", "CAT"] },
+        { "image": "🐵", "word": "MONKEY", "hint": "/ˈmʌŋ.ki/", "options": ["MONKEY", "BEAR", "PIG"] },
+        { "image": "🦁", "word": "LION", "hint": "/ˈlaɪ.ən/", "options": ["LION", "TIGER", "DOG"] }
+      ]
+    },
+    {
+      "game_id": 2,
+      "name": "Level 2: 顏色小火車",
+      "icon": "🚂",
+      "themeColor": "#4AD3C6",
+      "isHot": false,
+      "tags": ["Simple Sentences", "基礎句型", "Colors & Items", "顏色與物品"],
+      "description": "Match the simple sentence with the right color! 閱讀簡單的英文短句，幫小火車載上正確的顏色吧！",
+      "questions": [
+        { "image": "🔴", "sentence": "It is a RED circle.", "word": "RED", "options": ["RED", "BLUE", "YELLOW"] },
+        { "image": "🔵", "sentence": "The sky is BLUE.", "word": "BLUE", "options": ["BLUE", "GREEN", "RED"] },
+        { "image": "💛", "sentence": "The star is YELLOW.", "word": "YELLOW", "options": ["YELLOW", "ORANGE", "PINK"] },
+        { "image": "🟢", "sentence": "The leaf is GREEN.", "word": "GREEN", "options": ["GREEN", "PURPLE", "BLUE"] },
+        { "image": "🟠", "sentence": "It is an ORANGE fruit.", "word": "ORANGE", "options": ["ORANGE", "RED", "YELLOW"] },
+        { "image": "🟣", "sentence": "The grape is PURPLE.", "word": "PURPLE", "options": ["PURPLE", "PINK", "BLUE"] },
+        { "image": "🩷", "sentence": "I like the PINK heart.", "word": "PINK", "options": ["PINK", "RED", "WHITE"] },
+        { "image": "⚪", "sentence": "The cloud is WHITE.", "word": "WHITE", "options": ["WHITE", "BLACK", "GRAY"] },
+        { "image": "⚫", "sentence": "The cat is BLACK.", "word": "BLACK", "options": ["BLACK", "BROWN", "WHITE"] },
+        { "image": "🤎", "sentence": "The bear is BROWN.", "word": "BROWN", "options": ["BROWN", "ORANGE", "RED"] }
+      ]
+    },
+    {
+      "game_id": 3,
+      "name": "Level 3: 數字火箭升空",
+      "icon": "🚀",
+      "themeColor": "#FFAE42",
+      "isHot": false,
+      "tags": ["Number Logic", "數字邏輯", "Sequences", "規律填空"],
+      "description": "Fill in the missing number to launch the rocket! 找出缺少的數字，填補序列讓火箭發射升空！",
+      "questions": [
+        { "sequence": [5, "_", 7], "answer": 6, "options": [6, 4, 8] },
+        { "sequence": [10, 11, "_"], "answer": 12, "options": [12, 13, 9] },
+        { "sequence": ["_", 15, 16], "answer": 14, "options": [14, 13, 17] },
+        { "sequence": [20, 19, "_"], "answer": 18, "options": [18, 21, 17] },
+        { "sequence": [8, "_", 10], "answer": 9, "options": [9, 7, 11] },
+        { "sequence": [25, 24, "_"], "answer": 23, "options": [23, 22, 26] },
+        { "sequence": [12, "_", 14], "answer": 13, "options": [13, 11, 15] },
+        { "sequence": ["_", 21, 22], "answer": 20, "options": [20, 19, 23] },
+        { "sequence": [15, 14, "_"], "answer": 13, "options": [13, 16, 12] },
+        { "sequence": [27, 28, "_"], "answer": 29, "options": [29, 30, 26] },
+        { "sequence": [6, "_", 8], "answer": 7, "options": [7, 5, 9] },
+        { "sequence": [17, 18, "_"], "answer": 19, "options": [19, 20, 16] },
+        { "sequence": ["_", 9, 10], "answer": 8, "options": [8, 7, 11] },
+        { "sequence": [16, 15, "_"], "answer": 14, "options": [14, 13, 17] },
+        { "sequence": [22, "_", 24], "answer": 23, "options": [23, 21, 25] },
+        { "sequence": [11, 12, "_"], "answer": 13, "options": [13, 14, 10] },
+        { "sequence": ["_", 18, 19], "answer": 17, "options": [17, 16, 20] },
+        { "sequence": [29, 28, "_"], "answer": 27, "options": [27, 30, 26] },
+        { "sequence": [19, "_", 21], "answer": 20, "options": [20, 18, 22] },
+        { "sequence": [23, 24, "_"], "answer": 25, "options": [25, 26, 22] }
+      ]
+    }
+  ]
+}
