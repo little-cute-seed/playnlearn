@@ -1,0 +1,23 @@
+[
+  {
+    "id": "game1",
+    "title": "小豬餵食",
+    "icon": "🐷",
+    "description": "快來餵小豬吃東西吧！",
+    "url": "game1.html"
+  },
+  {
+    "id": "game2",
+    "title": "遊戲 2 (準備中)",
+    "icon": "🎨",
+    "description": "即將推出",
+    "url": "#"
+  },
+  {
+    "id": "game3",
+    "title": "遊戲 3 (準備中)",
+    "icon": "🚗",
+    "description": "即將推出",
+    "url": "#"
+  }
+]
