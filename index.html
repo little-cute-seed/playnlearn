@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>幼兒快樂學習樂園</title>
+  <style>
+    :root {
+      --bg-color: #f0f9ff;
+      --card-bg: #ffffff;
+      --primary-color: #ff6b81;
+      --text-color: #2d3436;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Fredoka', 'Chalkboard SE', 'Comic Sans MS', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      color: #ff4757;
+      text-shadow: 2px 2px 0px #ffeaa7;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      color: #74b9ff;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    /* 1列 x 3欄 網格配置 */
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+      width: 100%;
+      max-width: 1000px;
+      margin-top: 20px;
+    }
+
+    /* 手機與平板響應式調整 */
+    @media (max-width: 768px) {
+      .game-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .game-card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 30px 20px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text-color);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      border: 4px solid #70a1ff;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .game-card:hover {
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 0 18px 25px rgba(0,0,0,0.15);
+      border-color: #ff6b81;
+    }
+
+    .game-card .icon {
+      font-size: 5rem;
+      margin-bottom: 15px;
+      animation: bounce 2s infinite ease-in-out;
+    }
+
+    .game-card h2 {
+      font-size: 1.8rem;
+      color: #2e86de;
+      margin-bottom: 10px;
+    }
+
+    .game-card p {
+      font-size: 1.1rem;
+      color: #8395a7;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🎈 幼兒快樂學習樂園 🎈</h1>
+    <p>選一個想玩的遊戲吧！</p>
+  </header>
+
+  <main class="game-grid" id="gameGrid">
+    <!-- 資料將由 JS 動態從 games.json 載入 -->
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch('games.json')
+        .then(response => {
+          if (!response.ok) throw new Error("讀取 JSON 失敗");
+          return response.json();
+        })
+        .then(data => {
+          const grid = document.getElementById('gameGrid');
+          grid.innerHTML = '';
+          data.forEach(game => {
+            const card = document.createElement('a');
+            card.className = 'game-card';
+            card.href = game.url;
+            card.innerHTML = `
+              <div class="icon">${game.icon}</div>
+              <h2>${game.title}</h2>
+              <p>${game.description}</p>
+            `;
+            grid.appendChild(card);
+          });
+        })
+        .catch(error => {
+          console.error('Error loading games:', error);
+          document.getElementById('gameGrid').innerHTML = '<p style="font-size:1.5rem; color:red;">資料載入失敗，請檢查 games.json 檔案。</p>';
+        });
+    });
+  </script>
+</body>
+</html>
