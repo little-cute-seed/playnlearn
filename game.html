@@ -18,7 +18,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #fbdc8d;
+      background-color: #dff9fb;
     }
 
     /* Page View Controller */
@@ -59,21 +59,27 @@
       box-shadow: 0 4px 0 #d63031;
     }
 
-    /* --- 1. Start View --- */
+    /* --- 1. Start View / Front Page --- */
     #startView {
       justify-content: center;
       gap: 30px;
-      background: linear-gradient(135deg, #ff9ff3, #feca57);
+      background: linear-gradient(135deg, #c7ecee, #dff9fb);
     }
 
     .title-box {
       text-align: center;
-      color: white;
-      text-shadow: 3px 3px 0 #ff6b6b;
+      color: #2c3e50;
     }
 
-    .title-box h1 { font-size: 3.5rem; }
-    .title-box p { font-size: 1.5rem; margin-top: 10px; }
+    .title-box h1 { 
+      font-size: 2.8rem; 
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .title-box p { font-size: 1.4rem; color: #576574; }
 
     .big-train-avatar {
       font-size: 8rem;
@@ -198,7 +204,7 @@
     }
 
     .drop-blank.drag-over {
-      background-color: #d1f2pt;
+      background-color: #eccc68;
       border-bottom-color: #00b894;
       transform: scale(1.1);
     }
@@ -360,14 +366,14 @@
 </head>
 <body>
 
-  <!-- 1. Start View -->
+  <!-- 1. Front Page / Start View -->
   <div id="startView" class="view active-view">
     <div class="title-box">
-      <h1>🚂 顏色小火車 🚋</h1>
-      <p>Drag or tap the answer into the blank!</p>
+      <h1>🎮 選擇遊戲關卡 Choose a Game</h1>
+      <p>顏色小火車 Color Train</p>
     </div>
     <div class="big-train-avatar">🚂</div>
-    <button class="btn-large" onclick="startGame()">START</button>
+    <button class="btn-large" onclick="startGame()">START 🚀</button>
   </div>
 
   <!-- 2. Game View -->
@@ -375,7 +381,7 @@
     <!-- Header with Train & Progress Bar -->
     <div class="header-bar">
       <div class="top-row">
-        <button class="home-btn" onclick="location.href='index.html'">🏠 Home</button>
+        <button class="home-btn" onclick="goHome()">🏠 Home</button>
         <div id="headerTitle" class="header-title">顏色小火車 (1/5)</div>
       </div>
       
@@ -414,7 +420,7 @@
       <div class="final-score-box">小火車出發囉！</div>
       <div class="end-buttons">
         <button class="btn-large" onclick="startGame()">Play Again 🔄</button>
-        <button class="btn-large btn-home" onclick="location.href='index.html'">Home 🏠</button>
+        <button class="btn-large btn-home" onclick="goHome()">Home 🏠</button>
       </div>
     </div>
   </div>
@@ -460,7 +466,7 @@
 
     let currentIdx = 0;
     let draggedElement = null;
-    let trainString = ""; // Stores train emoji 🚂 and trucks 🚋
+    let trainString = "";
 
     function speakQuestion() {
       if ('speechSynthesis' in window) {
@@ -476,6 +482,10 @@
     function switchView(viewId) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
       document.getElementById(viewId).classList.add('active-view');
+    }
+
+    function goHome() {
+      switchView('startView');
     }
 
     function startGame() {
