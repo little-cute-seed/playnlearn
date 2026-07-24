@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>餵食小屁豬 - Game 1</title>
+  <title>顏色小火車 / 餵食小屁豬</title>
   <style>
     * {
       box-sizing: border-box;
@@ -131,7 +131,7 @@
       cursor: pointer;
     }
 
-    /* Vocab Question Box (No Sentence & No Emoji) */
+    /* Vocab / Sentence Question Box */
     .question-box {
       text-align: center;
       background: white;
@@ -142,13 +142,18 @@
       align-items: center;
       justify-content: center;
       gap: 15px;
-      width: 85%;
-      max-width: 420px;
-      margin: 15px 0;
+      width: 90%;
+      max-width: 500px;
+      margin: 10px 0;
+    }
+
+    .question-emoji {
+      font-size: 42px;
+      line-height: 1;
     }
 
     .vocab-text {
-      font-size: 42px;
+      font-size: 32px;
       font-weight: 800;
       color: #2c3e50;
       letter-spacing: 1px;
@@ -171,8 +176,8 @@
 
     /* Piggy Target Zone */
     .pig-target-zone {
-      width: 200px;
-      height: 200px;
+      width: 180px;
+      height: 180px;
       background-color: #f8a5c2;
       border: 5px dashed #f78fb3;
       border-radius: 50%;
@@ -191,7 +196,7 @@
     }
 
     .pig-face {
-      font-size: 6rem;
+      font-size: 5.5rem;
       transition: all 0.2s;
     }
 
@@ -216,7 +221,7 @@
       transform: translateY(-15px) scale(1.2);
     }
 
-    /* 3 Choice Cards (42px Font) */
+    /* 3 Choice Cards */
     .options-container {
       display: flex;
       justify-content: center;
@@ -230,7 +235,7 @@
 
     .option-card {
       flex: 1;
-      max-width: 130px;
+      max-width: 140px;
       height: 95px;
       background-color: #ffffff;
       border: 4px solid #54a0ff;
@@ -239,11 +244,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 42px;
+      font-size: 28px;
       font-weight: bold;
       color: #2c3e50;
       cursor: pointer;
       touch-action: none;
+      padding: 5px;
+      text-align: center;
     }
 
     .option-card:active {
@@ -333,8 +340,8 @@
   <!-- 1. Start View -->
   <div id="startView" class="view active-view">
     <div class="title-box">
-      <h1>🐷 餵食小屁豬 🍌</h1>
-      <p>Tap or drag the food to feed piggy!</p>
+      <h1>🚂 顏色小火車 🐷</h1>
+      <p>Tap or drag the answer to feed piggy!</p>
     </div>
     <div class="big-pig-avatar">🐷</div>
     <button class="btn-large" onclick="startGame()">START</button>
@@ -348,12 +355,13 @@
       <div class="progress-container">
         <div id="progressFill" class="progress-fill"></div>
       </div>
-      <div id="headerTitle" class="header-title">餵食小屁豬 (1/10)</div>
+      <div id="headerTitle" class="header-title">顏色小火車 (1/5)</div>
     </div>
 
-    <!-- Vocab Card Box -->
+    <!-- Question Box -->
     <div class="question-box">
-      <div id="vocabText" class="vocab-text">Grapes</div>
+      <div id="questionEmoji" class="question-emoji">🐻</div>
+      <div id="sentenceText" class="vocab-text">The bear is _____.</div>
       <button class="audio-btn" onclick="speakQuestion()">🔊</button>
     </div>
 
@@ -383,29 +391,54 @@
   </div>
 
   <script>
-    // Game 1 Bank: Vocab format with 3 options
+    // Merged Question Bank featuring sentence support + options
     const questionsBank = [
-      { q: "Banana", correct: "🍌", wrong: ["🍎", "🍇"] },
-      { q: "Doughnut", correct: "🍩", wrong: ["🍞", "🍕"] },
-      { q: "Carrot", correct: "🥕", wrong: ["🌽", "🥦"] },
-      { q: "Ice Cream", correct: "🍦", wrong: ["🍰", "🍭"] },
-      { q: "Milk", correct: "🥛", wrong: ["🧃", "☕"] },
-      { q: "Strawberry", correct: "🍓", wrong: ["🍒", "🍉"] },
-      { q: "Watermelon", correct: "🍉", wrong: ["🍍", "🍊"] },
-      { q: "Bread", correct: "🍞", wrong: ["🍳", "🥞"] },
-      { q: "Apple", correct: "🍎", wrong: ["🍋", "🍐"] },
-      { q: "Grapes", correct: "🍇", wrong: ["🥝", "🍑"] }
+      {
+        image: "🐻",
+        sentence: "The bear is BROWN.",
+        displaySentence: "The bear is _____.",
+        word: "BROWN",
+        options: ["BROWN", "RED", "BLUE"]
+      },
+      {
+        image: "🍌",
+        sentence: "The banana is YELLOW.",
+        displaySentence: "The banana is _____.",
+        word: "YELLOW",
+        options: ["YELLOW", "GREEN", "PURPLE"]
+      },
+      {
+        image: "🍎",
+        sentence: "The apple is RED.",
+        displaySentence: "The apple is _____.",
+        word: "RED",
+        options: ["RED", "ORANGE", "BLUE"]
+      },
+      {
+        image: "🐸",
+        sentence: "The frog is GREEN.",
+        displaySentence: "The frog is _____.",
+        word: "GREEN",
+        options: ["GREEN", "PINK", "BLACK"]
+      },
+      {
+        image: "🍇",
+        sentence: "The grapes are PURPLE.",
+        displaySentence: "The grapes are _____.",
+        word: "PURPLE",
+        options: ["PURPLE", "YELLOW", "WHITE"]
+      }
     ];
 
     let currentIdx = 0;
     let draggedElement = null;
 
-    // TTS speaks full sentence aloud: "Can you find the [Vocab]?"
+    // Speaks the FULL sentence aloud (e.g., "The bear is BROWN.")
     function speakQuestion() {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        const vocab = questionsBank[currentIdx].q;
-        const msg = new SpeechSynthesisUtterance(`Can you find the ${vocab}?`);
+        const q = questionsBank[currentIdx];
+        const msg = new SpeechSynthesisUtterance(q.sentence);
         msg.lang = 'en-US';
         msg.rate = 0.85;
         window.speechSynthesis.speak(msg);
@@ -423,49 +456,52 @@
       loadQuestion();
     }
 
+    // Loads question: Displays sentence with blank underscores and renders options
     function loadQuestion() {
-      if (currentIdx >= 10) {
+      if (currentIdx >= questionsBank.length) {
         showEndVictoryPage();
         return;
       }
 
-      document.getElementById('headerTitle').innerText = `餵食小屁豬 (${currentIdx + 1}/10)`;
-      document.getElementById('progressFill').style.width = `${((currentIdx) / 10) * 100}%`;
+      // Update Progress / Header
+      document.getElementById('headerTitle').innerText = `顏色小火車 (${currentIdx + 1}/${questionsBank.length})`;
+      document.getElementById('progressFill').style.width = `${((currentIdx) / questionsBank.length) * 100}%`;
 
       const q = questionsBank[currentIdx];
-      // Display strictly the vocab word
-      document.getElementById('vocabText').innerText = q.q;
-      
+
+      // Display image & sentence with blank underscores
+      document.getElementById('questionEmoji').innerText = q.image;
+      document.getElementById('sentenceText').innerText = q.displaySentence;
+
+      // Read aloud full sentence
       speakQuestion();
 
-      // Shuffle 1 correct + 2 wrong choices
-      const options = [
-        { text: q.correct, isCorrect: true },
-        { text: q.wrong[0], isCorrect: false },
-        { text: q.wrong[1], isCorrect: false }
-      ].sort(() => Math.random() - 0.5);
-
+      // Render Option Cards
       const container = document.getElementById('optionsContainer');
       container.innerHTML = '';
 
-      options.forEach((opt) => {
+      // Shuffle options
+      const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+
+      shuffledOptions.forEach((optText) => {
         const card = document.createElement('div');
         card.className = 'option-card';
-        card.innerText = opt.text;
+        card.innerText = optText;
+        const isCorrect = (optText === q.word);
+        card.dataset.isCorrect = isCorrect;
+
+        // Supports Tap / Press
+        card.onclick = () => checkAnswer(isCorrect, card);
+
+        // Drag support
         card.draggable = true;
-        card.dataset.isCorrect = opt.isCorrect;
-
-        // Desktop Mouse Click
-        card.onclick = () => checkAnswer(opt.isCorrect, card);
-
-        // Desktop Drag & Drop
         card.ondragstart = (e) => {
           draggedElement = card;
-          e.dataTransfer.setData('text/plain', opt.isCorrect);
+          e.dataTransfer.setData('text/plain', isCorrect);
         };
 
-        // Touch Interaction: Dual support for both Drag and Press/Tap
-        bindTouchEvents(card, opt.isCorrect);
+        // Mobile touch support (tap & drag)
+        bindTouchEvents(card, isCorrect);
 
         container.appendChild(card);
       });
@@ -488,7 +524,6 @@
         const moveX = Math.abs(touch.clientX - startX);
         const moveY = Math.abs(touch.clientY - startY);
 
-        // Threshold to differentiate tap vs drag
         if (moveX > 10 || moveY > 10) {
           isDragging = true;
           elem.style.position = 'fixed';
@@ -506,10 +541,8 @@
         elem.style.zIndex = 'auto';
 
         if (!isDragging) {
-          // Action 1: Tap / Press
           checkAnswer(isCorrect, elem);
         } else {
-          // Action 2: Drag & Drop
           if (
             touch.clientX >= pigTarget.left &&
             touch.clientX <= pigTarget.right &&
@@ -522,7 +555,7 @@
       };
     }
 
-    // Pig Target Drop Listeners
+    // Target Drag Listeners
     const pigTarget = document.getElementById('pigTarget');
 
     pigTarget.ondragover = (e) => {
