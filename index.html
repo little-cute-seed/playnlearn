@@ -1,191 +1,153 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kids Word & Math Game - Select Level</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>幼兒快樂學習樂園</title>
+  <style>
+    :root {
+      --bg-color: #f0f9ff;
+      --card-bg: #ffffff;
+      --primary-color: #ff6b81;
+      --text-color: #2d3436;
+    }
 
-        body {
-            margin: 0;
-            padding: 40px 20px;
-            background-color: #CBE6FF;
-            background-image: radial-gradient(circle at 50% 50%, #E2F0FF 0%, #BFE0FF 100%);
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Fredoka', cursive, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Fredoka', 'Chalkboard SE', 'Comic Sans MS', sans-serif;
+    }
 
-        h1 {
-            color: #2C3E50;
-            font-size: 32px;
-            margin-bottom: 30px;
-            text-align: center;
-            text-shadow: 0 2px 4px rgba(255,255,255,0.8);
-        }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
 
-        /* Responsive Grid Layout */
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            max-width: 1100px;
-            width: 100%;
-        }
+    header {
+      text-align: center;
+      margin: 30px 0;
+    }
 
-        /* Interactive Card Styling */
-        .game-card {
-            background: #FFFFFF;
-            border-radius: 28px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-        }
+    header h1 {
+      font-size: 2.8rem;
+      color: #ff4757;
+      text-shadow: 2px 2px 0px #ffeaa7;
+    }
 
-        .game-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 16px 35px rgba(0, 0, 0, 0.12);
-        }
+    header p {
+      font-size: 1.2rem;
+      color: #74b9ff;
+      margin-top: 10px;
+      font-weight: bold;
+    }
 
-        /* Banner Header with Polka Dot Pattern */
-        .card-header {
-            height: 160px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.4) 2px, transparent 2px);
-            background-size: 16px 16px;
-        }
+    /* 1列 x 3欄 網格配置 */
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+      width: 100%;
+      max-width: 1000px;
+      margin-top: 20px;
+    }
 
-        .card-icon {
-            font-size: 64px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
-        }
+    /* 手機與平板響應式調整 */
+    @media (max-width: 768px) {
+      .game-grid {
+        grid-template-columns: 1fr;
+      }
+    }
 
-        .hot-badge {
-            position: absolute;
-            top: 14px;
-            right: 16px;
-            background-color: #FF5252;
-            color: white;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 900;
-            box-shadow: 0 3px 6px rgba(255, 82, 82, 0.4);
-        }
+    .game-card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 30px 20px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text-color);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      border: 4px solid #70a1ff;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
 
-        .card-body {
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
+    .game-card:hover {
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 0 18px 25px rgba(0,0,0,0.15);
+      border-color: #ff6b81;
+    }
 
-        .card-title {
-            font-size: 22px;
-            font-weight: 900;
-            color: #1E293B;
-            margin: 0 0 16px 0;
-            line-height: 1.3;
-        }
+    .game-card .icon {
+      font-size: 5rem;
+      margin-bottom: 15px;
+      animation: bounce 2s infinite ease-in-out;
+    }
 
-        .tag-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
+    .game-card h2 {
+      font-size: 1.8rem;
+      color: #2e86de;
+      margin-bottom: 10px;
+    }
 
-        .tag {
-            padding: 6px 12px;
-            border-radius: 16px;
-            font-size: 12px;
-            font-weight: 700;
-        }
+    .game-card p {
+      font-size: 1.1rem;
+      color: #8395a7;
+    }
 
-        .tag-blue { background-color: #EEF4FF; color: #4F46E5; }
-        .tag-orange { background-color: #FFF6ED; color: #EA580C; }
-
-        .card-desc {
-            font-size: 13px;
-            color: #64748B;
-            line-height: 1.5;
-            margin-top: auto;
-        }
-    </style>
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+  </style>
 </head>
 <body>
 
-    <h1>🎮 選擇遊戲關卡 Choose a Game</h1>
+  <header>
+    <h1>🎈 幼兒快樂學習樂園 🎈</h1>
+    <p>選一個想玩的遊戲吧！</p>
+  </header>
 
-    <div class="game-grid" id="gameGrid"></div>
+  <main class="game-grid" id="gameGrid">
+    <!-- 資料將由 JS 動態從 games.json 載入 -->
+  </main>
 
-    <script>
-        function renderCards(games) {
-            const grid = document.getElementById('gameGrid');
-            grid.innerHTML = '';
-
-            games.forEach(game => {
-                const card = document.createElement('a');
-                card.className = 'game-card';
-                card.href = `./game.html?game=${game.game_id}`;
-
-                const tagsHtml = game.tags ? game.tags.map((tag, idx) => 
-                    `<span class="tag ${idx % 2 === 0 ? 'tag-blue' : 'tag-orange'}">${tag}</span>`
-                ).join('') : '';
-
-                card.innerHTML = `
-                    <div class="card-header" style="background-color: ${game.themeColor || '#9C82FA'};">
-                        ${game.isHot ? '<span class="hot-badge">Hot</span>' : ''}
-                        <div class="card-icon">${game.icon || '🎮'}</div>
-                    </div>
-                    <div class="card-body">
-                        <h2 class="card-title">${game.name}</h2>
-                        <div class="tag-container">${tagsHtml}</div>
-                        <div class="card-desc">${game.description || ''}</div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        fetch('./data.json')
-            .then(res => {
-                if (!res.ok) throw new Error("Failed to load data.json");
-                return res.json();
-            })
-            .then(data => {
-                const gamesList = Array.isArray(data) ? data : (data.games || []);
-                renderCards(gamesList);
-            })
-            .catch(err => {
-                console.warn("Fallback to inline menu data due to fetch error:", err);
-                renderCards([
-                    {
-                        game_id: "color_train",
-                        name: "🚂 顏色小火車",
-                        icon: "🚂",
-                        themeColor: "#fbdc8d",
-                        isHot: true,
-                        tags: ["Color", "English"],
-                        description: "Drag the correct color word into the blank to build your train!"
-                    }
-                ]);
-            });
-    </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch('games.json')
+        .then(response => {
+          if (!response.ok) throw new Error("讀取 JSON 失敗");
+          return response.json();
+        })
+        .then(data => {
+          const grid = document.getElementById('gameGrid');
+          grid.innerHTML = '';
+          data.forEach(game => {
+            const card = document.createElement('a');
+            card.className = 'game-card';
+            card.href = game.url;
+            card.innerHTML = `
+              <div class="icon">${game.icon}</div>
+              <h2>${game.title}</h2>
+              <p>${game.description}</p>
+            `;
+            grid.appendChild(card);
+          });
+        })
+        .catch(error => {
+          console.error('Error loading games:', error);
+          document.getElementById('gameGrid').innerHTML = '<p style="font-size:1.5rem; color:red;">資料載入失敗，請檢查 games.json 檔案。</p>';
+        });
+    });
+  </script>
 </body>
 </html>
