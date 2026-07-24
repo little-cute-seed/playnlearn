@@ -21,27 +21,18 @@
         { "image": "🦁", "word": "LION", "hint": "/ˈlaɪ.ən/", "options": ["LION", "TIGER", "DOG"] }
       ]
     },
-    {
-      "game_id": 2,
-      "name": "Level 2: 顏色小火車",
-      "icon": "🚂",
-      "themeColor": "#4AD3C6",
-      "isHot": false,
-      "tags": ["Simple Sentences", "基礎句型", "Colors & Items", "顏色與物品"],
-      "description": "Match the simple sentence with the right color! 閱讀簡單的英文短句，幫小火車載上正確的顏色吧！",
-      "questions": [
-        { "image": "🔴", "sentence": "It is a RED circle.", "word": "RED", "options": ["RED", "BLUE", "YELLOW"] },
-        { "image": "🔵", "sentence": "The sky is BLUE.", "word": "BLUE", "options": ["BLUE", "GREEN", "RED"] },
-        { "image": "💛", "sentence": "The star is YELLOW.", "word": "YELLOW", "options": ["YELLOW", "ORANGE", "PINK"] },
-        { "image": "🟢", "sentence": "The leaf is GREEN.", "word": "GREEN", "options": ["GREEN", "PURPLE", "BLUE"] },
-        { "image": "🟠", "sentence": "It is an ORANGE fruit.", "word": "ORANGE", "options": ["ORANGE", "RED", "YELLOW"] },
-        { "image": "🟣", "sentence": "The grape is PURPLE.", "word": "PURPLE", "options": ["PURPLE", "PINK", "BLUE"] },
-        { "image": "🩷", "sentence": "I like the PINK heart.", "word": "PINK", "options": ["PINK", "RED", "WHITE"] },
-        { "image": "⚪", "sentence": "The cloud is WHITE.", "word": "WHITE", "options": ["WHITE", "BLACK", "GRAY"] },
-        { "image": "⚫", "sentence": "The cat is BLACK.", "word": "BLACK", "options": ["BLACK", "BROWN", "WHITE"] },
-        { "image": "🤎", "sentence": "The bear is BROWN.", "word": "BROWN", "options": ["BROWN", "ORANGE", "RED"] }
-      ]
-    },
+    const questionsBank = [
+  { image: "🔴", sentence: "It is a RED circle.", displaySentence: "It is a ___ circle.", word: "RED", options: ["RED", "BLUE", "YELLOW"] },
+  { image: "🔵", sentence: "The sky is BLUE.", displaySentence: "The sky is ____.", word: "BLUE", options: ["BLUE", "GREEN", "RED"] },
+  { image: "💛", sentence: "The star is YELLOW.", displaySentence: "The star is ______.", word: "YELLOW", options: ["YELLOW", "ORANGE", "PINK"] },
+  { image: "🟢", sentence: "The leaf is GREEN.", displaySentence: "The leaf is _____.", word: "GREEN", options: ["GREEN", "PURPLE", "BLUE"] },
+  { image: "🟠", sentence: "It is an ORANGE fruit.", displaySentence: "It is an ______ fruit.", word: "ORANGE", options: ["ORANGE", "RED", "YELLOW"] },
+  { image: "🟣", sentence: "The grape is PURPLE.", displaySentence: "The grape is ______.", word: "PURPLE", options: ["PURPLE", "PINK", "BLUE"] },
+  { image: "🩷", sentence: "I like the PINK heart.", displaySentence: "I like the ____ heart.", word: "PINK", options: ["PINK", "RED", "WHITE"] },
+  { image: "⚪", sentence: "The cloud is WHITE.", displaySentence: "The cloud is _____.", word: "WHITE", options: ["WHITE", "BLACK", "GRAY"] },
+  { image: "⚫", sentence: "The cat is BLACK.", displaySentence: "The cat is _____.", word: "BLACK", options: ["BLACK", "BROWN", "WHITE"] },
+  { image: "🤎", sentence: "The bear is BROWN.", displaySentence: "The bear is _____.", word: "BROWN", options: ["BROWN", "ORANGE", "RED"] }
+];
     {
       "game_id": 3,
       "name": "Level 3: 數字火箭升空",
