@@ -31,10 +31,10 @@
             text-shadow: 0 2px 4px rgba(255,255,255,0.8);
         }
 
-        /* Responsive 3-Column Layout */
+        /* Responsive Grid Layout */
         .game-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 24px;
             max-width: 1100px;
             width: 100%;
@@ -132,44 +132,60 @@
 
     <h1>🎮 選擇遊戲關卡 Choose a Game</h1>
 
-    <div class="game-grid" id="gameGrid">
-        <!-- Cards generated dynamically from data.json -->
-    </div>
+    <div class="game-grid" id="gameGrid"></div>
 
     <script>
+        function renderCards(games) {
+            const grid = document.getElementById('gameGrid');
+            grid.innerHTML = '';
+
+            games.forEach(game => {
+                const card = document.createElement('a');
+                card.className = 'game-card';
+                card.href = `./game.html?game=${game.game_id}`;
+
+                const tagsHtml = game.tags ? game.tags.map((tag, idx) => 
+                    `<span class="tag ${idx % 2 === 0 ? 'tag-blue' : 'tag-orange'}">${tag}</span>`
+                ).join('') : '';
+
+                card.innerHTML = `
+                    <div class="card-header" style="background-color: ${game.themeColor || '#9C82FA'};">
+                        ${game.isHot ? '<span class="hot-badge">Hot</span>' : ''}
+                        <div class="card-icon">${game.icon || '🎮'}</div>
+                    </div>
+                    <div class="card-body">
+                        <h2 class="card-title">${game.name}</h2>
+                        <div class="tag-container">${tagsHtml}</div>
+                        <div class="card-desc">${game.description || ''}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
         fetch('./data.json')
             .then(res => {
                 if (!res.ok) throw new Error("Failed to load data.json");
                 return res.json();
             })
             .then(data => {
-                const grid = document.getElementById('gameGrid');
-                grid.innerHTML = '';
-
-                data.games.forEach(game => {
-                    const card = document.createElement('a');
-                    card.className = 'game-card';
-                    card.href = `./game.html?game=${game.game_id}`;
-
-                    const tagsHtml = game.tags ? game.tags.map((tag, idx) => 
-                        `<span class="tag ${idx % 2 === 0 ? 'tag-blue' : 'tag-orange'}">${tag}</span>`
-                    ).join('') : '';
-
-                    card.innerHTML = `
-                        <div class="card-header" style="background-color: ${game.themeColor || '#9C82FA'};">
-                            ${game.isHot ? '<span class="hot-badge">Hot</span>' : ''}
-                            <div class="card-icon">${game.icon || '🎮'}</div>
-                        </div>
-                        <div class="card-body">
-                            <h2 class="card-title">${game.name}</h2>
-                            <div class="tag-container">${tagsHtml}</div>
-                            <div class="card-desc">${game.description || ''}</div>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
+                const gamesList = Array.isArray(data) ? data : (data.games || []);
+                renderCards(gamesList);
             })
-            .catch(err => console.error("Data loading error:", err));
+            .catch(err => {
+                console.warn("Fallback to inline menu data due to fetch error:", err);
+                renderCards([
+                    {
+                        game_id: "color_train",
+                        name: "🚂 顏色小火車",
+                        icon: "🚂",
+                        themeColor: "#fbdc8d",
+                        isHot: true,
+                        tags: ["Color", "English"],
+                        description: "Drag the correct color word into the blank to build your train!"
+                    }
+                ]);
+            });
     </script>
 </body>
 </html>
