@@ -116,7 +116,7 @@
     .progress-fill {
       height: 100%;
       width: 0%;
-      background-color: #ff4757; /* Pink / Coral Pink */
+      background-color: #ff4757;
       transition: width 0.3s ease;
       border-radius: 10px;
     }
@@ -131,54 +131,48 @@
       cursor: pointer;
     }
 
-    /* Question Box with 100px Emoji */
+    /* Vocab Question Box (No Sentence & No Emoji) */
     .question-box {
       text-align: center;
       background: white;
-      padding: 15px 25px;
+      padding: 20px 30px;
       border-radius: 24px;
       box-shadow: 0 6px 0 #f5cd79;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      width: 90%;
-      max-width: 480px;
-      margin: 10px 0 15px 0; /* Clear margins top and bottom */
+      gap: 15px;
+      width: 85%;
+      max-width: 420px;
+      margin: 15px 0;
     }
 
-    .question-text {
-      font-size: 24px;
-      font-weight: bold;
-      color: #303952;
-    }
-
-    /* 100px Sized Question Visual / Emoji */
-    .question-emoji {
-      font-size: 100px;
-      line-height: 100px;
-      height: 100px;
+    .vocab-text {
+      font-size: 42px;
+      font-weight: 800;
+      color: #2c3e50;
+      letter-spacing: 1px;
     }
 
     .audio-btn {
-      font-size: 22px;
+      font-size: 24px;
       background: #78e08f;
       border: none;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 4px 0 #b8e994;
+      flex-shrink: 0;
     }
 
     /* Piggy Target Zone */
     .pig-target-zone {
-      width: 180px;
-      height: 180px;
+      width: 200px;
+      height: 200px;
       background-color: #f8a5c2;
       border: 5px dashed #f78fb3;
       border-radius: 50%;
@@ -188,7 +182,7 @@
       justify-content: center;
       position: relative;
       transition: transform 0.2s;
-      margin: 10px 0 15px 0; /* Clear margins */
+      margin: 10px 0;
     }
 
     .pig-target-zone.drag-over {
@@ -197,7 +191,7 @@
     }
 
     .pig-face {
-      font-size: 5.5rem;
+      font-size: 6rem;
       transition: all 0.2s;
     }
 
@@ -205,7 +199,7 @@
       transform: scale(1.2);
     }
 
-    /* Success Pop-up Text "Yeah!" */
+    /* Success Text "Yeah!" */
     .yummy-text {
       position: absolute;
       top: -35px;
@@ -222,7 +216,7 @@
       transform: translateY(-15px) scale(1.2);
     }
 
-    /* 3 Options Container (42px Font Size) */
+    /* 3 Choice Cards (42px Font) */
     .options-container {
       display: flex;
       justify-content: center;
@@ -230,14 +224,14 @@
       width: 100%;
       max-width: 500px;
       margin-top: 10px;
-      margin-bottom: 15px;
-      min-height: 95px;
+      margin-bottom: 20px;
+      min-height: 100px;
     }
 
     .option-card {
       flex: 1;
       max-width: 130px;
-      height: 90px;
+      height: 95px;
       background-color: #ffffff;
       border: 4px solid #54a0ff;
       border-radius: 20px;
@@ -245,18 +239,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 42px; /* Fixed 42px font size */
+      font-size: 42px;
       font-weight: bold;
       color: #2c3e50;
-      cursor: grab;
+      cursor: pointer;
       touch-action: none;
     }
 
     .option-card:active {
-      cursor: grabbing;
+      transform: scale(0.95);
     }
 
-    /* --- 3. End View --- */
+    /* --- 3. Victory View --- */
     #endView {
       background: linear-gradient(180deg, #ff9ff3 0%, #54a0ff 100%);
       justify-content: center;
@@ -340,7 +334,7 @@
   <div id="startView" class="view active-view">
     <div class="title-box">
       <h1>🐷 餵食小屁豬 🍌</h1>
-      <p>Help feed piggy by choosing the right answer!</p>
+      <p>Tap or drag the food to feed piggy!</p>
     </div>
     <div class="big-pig-avatar">🐷</div>
     <button class="btn-large" onclick="startGame()">START</button>
@@ -348,7 +342,7 @@
 
   <!-- 2. Game View -->
   <div id="quizView" class="view">
-    <!-- Header with "餵食小屁豬 (1/10)" & Pink Progress Bar -->
+    <!-- Header -->
     <div class="header-bar">
       <button class="home-btn" onclick="location.href='index.html'">🏠 Home</button>
       <div class="progress-container">
@@ -357,13 +351,10 @@
       <div id="headerTitle" class="header-title">餵食小屁豬 (1/10)</div>
     </div>
 
-    <!-- Question Box with 100px Big Visual Emoji -->
+    <!-- Vocab Card Box -->
     <div class="question-box">
-      <div id="questionEmoji" class="question-emoji">🍌</div>
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <div id="questionText" class="question-text">Can you find the Banana?</div>
-        <button class="audio-btn" onclick="speakQuestion()">🔊</button>
-      </div>
+      <div id="vocabText" class="vocab-text">Grapes</div>
+      <button class="audio-btn" onclick="speakQuestion()">🔊</button>
     </div>
 
     <!-- Piggy Target Zone -->
@@ -392,30 +383,31 @@
   </div>
 
   <script>
-    // Game 1 Bank: 10 Questions with 3 Emoji Options each (Phonics/Hints removed)
+    // Game 1 Bank: Vocab format with 3 options
     const questionsBank = [
-      { q: "Can you find the Banana?", emoji: "🍌", correct: "🍌", wrong: ["🍎", "🍇"] },
-      { q: "Can you find the Doughnut?", emoji: "🍩", correct: "🍩", wrong: ["🍞", "🍕"] },
-      { q: "Can you find the Carrot?", emoji: "🥕", correct: "🥕", wrong: ["🌽", "🥦"] },
-      { q: "Can you find the Ice Cream?", emoji: "🍦", correct: "🍦", wrong: ["🍰", "🍭"] },
-      { q: "Can you find the Milk?", emoji: "🥛", correct: "🥛", wrong: ["🧃", "☕"] },
-      { q: "Can you find the Strawberry?", emoji: "🍓", correct: "🍓", wrong: ["🍒", "🍉"] },
-      { q: "Can you find the Watermelon?", emoji: "🍉", correct: "🍉", wrong: ["🍍", "🍊"] },
-      { q: "Can you find the Bread?", emoji: "🍞", correct: "🍞", wrong: ["🍳", "🥞"] },
-      { q: "Can you find the Apple?", emoji: "🍎", correct: "🍎", wrong: ["🍋", "🍐"] },
-      { q: "Can you find the Grapes?", emoji: "🍇", correct: "🍇", wrong: ["🥝", "🍑"] }
+      { q: "Banana", correct: "🍌", wrong: ["🍎", "🍇"] },
+      { q: "Doughnut", correct: "🍩", wrong: ["🍞", "🍕"] },
+      { q: "Carrot", correct: "🥕", wrong: ["🌽", "🥦"] },
+      { q: "Ice Cream", correct: "🍦", wrong: ["🍰", "🍭"] },
+      { q: "Milk", correct: "🥛", wrong: ["🧃", "☕"] },
+      { q: "Strawberry", correct: "🍓", wrong: ["🍒", "🍉"] },
+      { q: "Watermelon", correct: "🍉", wrong: ["🍍", "🍊"] },
+      { q: "Bread", correct: "🍞", wrong: ["🍳", "🥞"] },
+      { q: "Apple", correct: "🍎", wrong: ["🍋", "🍐"] },
+      { q: "Grapes", correct: "🍇", wrong: ["🥝", "🍑"] }
     ];
 
     let currentIdx = 0;
     let draggedElement = null;
 
+    // TTS speaks full sentence aloud: "Can you find the [Vocab]?"
     function speakQuestion() {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        const q = questionsBank[currentIdx];
-        const msg = new SpeechSynthesisUtterance(q.q);
+        const vocab = questionsBank[currentIdx].q;
+        const msg = new SpeechSynthesisUtterance(`Can you find the ${vocab}?`);
         msg.lang = 'en-US';
-        msg.rate = 0.9;
+        msg.rate = 0.85;
         window.speechSynthesis.speak(msg);
       }
     }
@@ -437,17 +429,16 @@
         return;
       }
 
-      // Update Header Title "餵食小屁豬 (1/10)"
       document.getElementById('headerTitle').innerText = `餵食小屁豬 (${currentIdx + 1}/10)`;
       document.getElementById('progressFill').style.width = `${((currentIdx) / 10) * 100}%`;
 
       const q = questionsBank[currentIdx];
-      document.getElementById('questionText').innerText = q.q;
-      document.getElementById('questionEmoji').innerText = q.emoji;
+      // Display strictly the vocab word
+      document.getElementById('vocabText').innerText = q.q;
       
       speakQuestion();
 
-      // Create 3 Options array (1 Correct + 2 Wrong) and shuffle
+      // Shuffle 1 correct + 2 wrong choices
       const options = [
         { text: q.correct, isCorrect: true },
         { text: q.wrong[0], isCorrect: false },
@@ -464,32 +455,47 @@
         card.draggable = true;
         card.dataset.isCorrect = opt.isCorrect;
 
+        // Desktop Mouse Click
         card.onclick = () => checkAnswer(opt.isCorrect, card);
 
+        // Desktop Drag & Drop
         card.ondragstart = (e) => {
           draggedElement = card;
           e.dataTransfer.setData('text/plain', opt.isCorrect);
         };
 
+        // Touch Interaction: Dual support for both Drag and Press/Tap
         bindTouchEvents(card, opt.isCorrect);
+
         container.appendChild(card);
       });
     }
 
-    // Touch Drag Support for Mobile
+    // Touch Event Handler supporting BOTH Drag and Press/Tap
     function bindTouchEvents(elem, isCorrect) {
+      let startX = 0, startY = 0;
+      let isDragging = false;
+
       elem.ontouchstart = (e) => {
         const touch = e.touches[0];
-        elem.style.position = 'fixed';
-        elem.style.zIndex = '1000';
-        elem.style.left = `${touch.clientX - 60}px`;
-        elem.style.top = `${touch.clientY - 45}px`;
+        startX = touch.clientX;
+        startY = touch.clientY;
+        isDragging = false;
       };
 
       elem.ontouchmove = (e) => {
         const touch = e.touches[0];
-        elem.style.left = `${touch.clientX - 60}px`;
-        elem.style.top = `${touch.clientY - 45}px`;
+        const moveX = Math.abs(touch.clientX - startX);
+        const moveY = Math.abs(touch.clientY - startY);
+
+        // Threshold to differentiate tap vs drag
+        if (moveX > 10 || moveY > 10) {
+          isDragging = true;
+          elem.style.position = 'fixed';
+          elem.style.zIndex = '1000';
+          elem.style.left = `${touch.clientX - 60}px`;
+          elem.style.top = `${touch.clientY - 45}px`;
+        }
       };
 
       elem.ontouchend = (e) => {
@@ -499,13 +505,19 @@
         elem.style.position = 'static';
         elem.style.zIndex = 'auto';
 
-        if (
-          touch.clientX >= pigTarget.left &&
-          touch.clientX <= pigTarget.right &&
-          touch.clientY >= pigTarget.top &&
-          touch.clientY <= pigTarget.bottom
-        ) {
+        if (!isDragging) {
+          // Action 1: Tap / Press
           checkAnswer(isCorrect, elem);
+        } else {
+          // Action 2: Drag & Drop
+          if (
+            touch.clientX >= pigTarget.left &&
+            touch.clientX <= pigTarget.right &&
+            touch.clientY >= pigTarget.top &&
+            touch.clientY <= pigTarget.bottom
+          ) {
+            checkAnswer(isCorrect, elem);
+          }
         }
       };
     }
