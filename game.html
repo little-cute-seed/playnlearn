@@ -1,23 +1,587 @@
-[
-  {
-    "id": "game1",
-    "title": "小豬餵食",
-    "icon": "🐷",
-    "description": "快來餵小豬吃東西吧！",
-    "url": "game1.html"
-  },
-  {
-    "id": "game2",
-    "title": "遊戲 2 (準備中)",
-    "icon": "🎨",
-    "description": "即將推出",
-    "url": "#"
-  },
-  {
-    "id": "game3",
-    "title": "遊戲 3 (準備中)",
-    "icon": "🚗",
-    "description": "即將推出",
-    "url": "#"
-  }
-]
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>小豬餵食 - 幼兒遊戲</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: 'Fredoka', 'Chalkboard SE', 'Comic Sans MS', sans-serif;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #fff0f5;
+    }
+
+    /* 頁面切換控制 */
+    .view {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    .active-view {
+      display: flex !important;
+    }
+
+    /* 按鈕共用樣式 */
+    .btn-large {
+      font-size: 36px;
+      font-weight: bold;
+      padding: 15px 40px;
+      background-color: #ff4757;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      box-shadow: 0 8px 0 #d63031;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .btn-large:active {
+      transform: translateY(4px);
+      box-shadow: 0 4px 0 #d63031;
+    }
+
+    /* --- 1. 開始頁 (Start View) --- */
+    #startView {
+      justify-content: center;
+      gap: 30px;
+      background: linear-gradient(135deg, #ff9ff3, #feca57);
+    }
+
+    .title-box {
+      text-align: center;
+      color: white;
+      text-shadow: 3px 3px 0 #ff6b6b;
+    }
+
+    .title-box h1 { font-size: 3.5rem; }
+    .title-box p { font-size: 1.5rem; margin-top: 10px; }
+
+    .big-pig-avatar {
+      font-size: 8rem;
+      animation: pulse 1.5s infinite;
+    }
+
+    /* --- 2. 遊戲頁 (Quiz View) --- */
+    #quizView {
+      background-color: #f7d794;
+    }
+
+    /* 進度條 */
+    .header-bar {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .progress-container {
+      flex: 1;
+      height: 24px;
+      background-color: rgba(255, 255, 255, 0.6);
+      border-radius: 12px;
+      margin: 0 15px;
+      overflow: hidden;
+      border: 2px solid #574b90;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background-color: #10ac84;
+      transition: width 0.3s ease;
+    }
+
+    .score-text {
+      font-size: 24px;
+      font-weight: bold;
+      color: #303952;
+    }
+
+    /* 題目區與聲音按鈕 */
+    .question-box {
+      text-align: center;
+      background: white;
+      padding: 15px 30px;
+      border-radius: 20px;
+      box-shadow: 0 5px 0 #f5cd79;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .question-text {
+      font-size: 32px;
+      font-weight: bold;
+      color: #303952;
+    }
+
+    .audio-btn {
+      font-size: 28px;
+      background: #78e08f;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 小豬目標區 */
+    .pig-target-zone {
+      width: 220px;
+      height: 220px;
+      background-color: #f8a5c2;
+      border: 6px dashed #f78fb3;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: transform 0.2s;
+    }
+
+    .pig-target-zone.drag-over {
+      transform: scale(1.15);
+      background-color: #f78fb3;
+    }
+
+    .pig-face {
+      font-size: 6.5rem;
+      transition: all 0.2s;
+    }
+
+    .pig-eating {
+      transform: scale(1.2);
+    }
+
+    .yummy-text {
+      position: absolute;
+      top: -40px;
+      font-size: 48px;
+      font-weight: bold;
+      color: #ff4757;
+      opacity: 0;
+      transition: all 0.3s ease-out;
+      text-shadow: 2px 2px white;
+    }
+
+    .yummy-text.show {
+      opacity: 1;
+      transform: translateY(-20px) scale(1.2);
+    }
+
+    /* 選項區域 (嚴格規範 42px 大字體) */
+    .options-container {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+
+    .option-card {
+      min-width: 160px;
+      height: 100px;
+      background-color: #ffffff;
+      border: 4px solid #54a0ff;
+      border-radius: 24px;
+      box-shadow: 0 8px 0 #2e86de;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* 嚴格規定：42px 大字體 */
+      font-size: 42px;
+      font-weight: bold;
+      color: #2c3e50;
+      cursor: grab;
+      touch-action: none; /* 防止手機拖曳時滾動 */
+    }
+
+    .option-card:active {
+      cursor: grabbing;
+    }
+
+    /* --- 3. 獨立滿版慶祝頁 (End View - Separate Victory Page) --- */
+    #endView {
+      background: linear-gradient(180deg, #ff9ff3 0%, #54a0ff 100%);
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      z-index: 2;
+    }
+
+    /* 全螢幕煙火/彩帶 Canvas */
+    #confettiCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .victory-content {
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* 巨大黃金獎盃 */
+    .giant-trophy {
+      font-size: 9rem;
+      animation: trophyFloat 2s infinite ease-in-out;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+    }
+
+    .victory-title {
+      font-size: 3.5rem;
+      color: #fff200;
+      text-shadow: 4px 4px 0 #ff3838;
+      margin: 10px 0;
+    }
+
+    .final-score-box {
+      font-size: 2.2rem;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px 30px;
+      border-radius: 30px;
+      color: #2c3e50;
+      font-weight: bold;
+      margin-bottom: 25px;
+    }
+
+    .end-buttons {
+      display: flex;
+      gap: 20px;
+      z-index: 4;
+    }
+
+    .btn-home {
+      background-color: #10ac84;
+      box-shadow: 0 8px 0 #0f9675;
+    }
+
+    /* 動畫 Keyframes */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    @keyframes trophyFloat {
+      0%, 100% { transform: translateY(0) rotate(-3deg); }
+      50% { transform: translateY(-15px) rotate(3deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. 開始頁面 -->
+  <div id="startView" class="view active-view">
+    <div class="title-box">
+      <h1>🐷 小豬餵食 🍌</h1>
+      <p>幫忙回答問題，把小豬餵得飽飽的吧！</p>
+    </div>
+    <div class="big-pig-avatar">🐷</div>
+    <button class="btn-large" onclick="startGame()">開始遊戲</button>
+  </div>
+
+  <!-- 2. 遊戲進行頁面 -->
+  <div id="quizView" class="view">
+    <div class="header-bar">
+      <button onclick="location.href='index.html'" style="font-size: 20px; padding: 5px 15px; border-radius: 10px; border:none; cursor:pointer;">🏠 首頁</button>
+      <div class="progress-container">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <div class="score-text"><span id="currentStep">1</span>/10</div>
+    </div>
+
+    <div class="question-box">
+      <div id="questionText" class="question-text">題目載入中...</div>
+      <button class="audio-btn" onclick="speakQuestion()">🔊</button>
+    </div>
+
+    <!-- 小豬餵食目標區 (支援 Drop) -->
+    <div id="pigTarget" class="pig-target-zone">
+      <div id="yummyText" class="yummy-text">YAY! 🎉</div>
+      <div id="pigFace" class="pig-face">🐷</div>
+      <div style="font-size: 16px; color: #666; font-weight: bold;">餵我吃！</div>
+    </div>
+
+    <!-- 2個選項 (支援 Drag & Click，字體 42px) -->
+    <div class="options-container" id="optionsContainer">
+      <!-- 由 JS 動態繪製 -->
+    </div>
+  </div>
+
+  <!-- 3. 獨立滿版慶祝頁面 (End Separate Page) -->
+  <div id="endView" class="view">
+    <canvas id="confettiCanvas"></canvas>
+    <div class="victory-content">
+      <div class="giant-trophy">🏆</div>
+      <div style="font-size: 4rem;">🐷✨</div>
+      <h1 class="victory-title">太棒了！小豬吃飽了！</h1>
+      <div class="final-score-box">你順利完成了全部題目！</div>
+      <div class="end-buttons">
+        <button class="btn-large" onclick="startGame()">再玩一次 🔄</button>
+        <button class="btn-large btn-home" onclick="location.href='index.html'">回首頁 🏠</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 10 道適合 5 歲幼兒的題目 (含注音提示風格與水果點心認知)
+    const questionsBank = [
+      { q: "小豬想吃黃色的水果", prompt: "ㄒㄧㄤˇ ㄐㄧㄠ", correct: "🍌", wrong: "🍎" },
+      { q: "哪一個是圓形的甜點？", prompt: "ㄉ甜 ㄉㄧㄢˇ", correct: "🍩", wrong: "📐" },
+      { q: "哪個是小白兔最愛的蔬菜？", prompt: "ㄏㄨˊ ㄌㄨㄛˊ ㄅㄛ", correct: "🥕", wrong: "🍇" },
+      { q: "哪一個是冰冰涼涼的甜筒？", prompt: "ㄅㄧㄥ ㄑㄧˊ ㄌㄧㄣˊ", correct: "🍦", wrong: "🍞" },
+      { q: "小豬想喝牛牛產的飲料", prompt: "ㄋㄧㄡˊ ㄋㄞˇ", correct: "🥛", wrong: "🥤" },
+      { q: "哪一個是酸酸甜甜的草莓？", prompt: " Ba ㄙㄠ ㄇㄟˊ", correct: "🍓", wrong: "🍉" },
+      { q: "哪一個是多汁的大西瓜？", prompt: "ㄒㄧ ㄍㄨㄚ", correct: "🍉", wrong: "🍍" },
+      { q: "小豬想吃剛烘焙好的香吐司", prompt: "ㄊㄨˇ ㄙ", correct: "🍞", wrong: "🍕" },
+      { q: "哪一個是紅色酸甜的蘋果？", prompt: "ㄆㄧㄥˊ ㄍㄨㄛˇ", correct: "🍎", wrong: "🍋" },
+      { q: "哪一個是多汁的紫葡萄？", prompt: "ㄆㄨˊ ㄊㄠˊ", correct: "🍇", wrong: "🍒" }
+    ];
+
+    let currentIdx = 0;
+    let draggedElement = null;
+
+    // 聲音合成 (TTS 語音朗讀)
+    function speakQuestion() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const q = questionsBank[currentIdx];
+        const msg = new SpeechSynthesisUtterance(q.q);
+        msg.lang = 'zh-TW';
+        msg.rate = 0.9;
+        window.speechSynthesis.speak(msg);
+      }
+    }
+
+    function switchView(viewId) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
+      document.getElementById(viewId).classList.add('active-view');
+    }
+
+    function startGame() {
+      currentIdx = 0;
+      switchView('quizView');
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      if (currentIdx >= 10) {
+        showEndVictoryPage();
+        return;
+      }
+
+      // 更新進度
+      document.getElementById('currentStep').innerText = currentIdx + 1;
+      document.getElementById('progressFill').style.width = `${((currentIdx) / 10) * 100}%`;
+
+      const q = questionsBank[currentIdx];
+      document.getElementById('questionText').innerHTML = `${q.q} <br><span style="font-size:18px; color:#e67e22;">(${q.prompt})</span>`;
+      
+      speakQuestion();
+
+      // 隨機打亂選項
+      const options = [
+        { text: q.correct, isCorrect: true },
+        { text: q.wrong, isCorrect: false }
+      ].sort(() => Math.random() - 0.5);
+
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = '';
+
+      options.forEach((opt, index) => {
+        const card = document.createElement('div');
+        card.className = 'option-card';
+        card.innerText = opt.text;
+        card.draggable = true;
+        card.dataset.isCorrect = opt.isCorrect;
+
+        // 雙重操作 1：點擊事件
+        card.onclick = () => checkAnswer(opt.isCorrect, card);
+
+        // 雙重操作 2：拖曳事件 (Mouse Drag)
+        card.ondragstart = (e) => {
+          draggedElement = card;
+          e.dataTransfer.setData('text/plain', opt.isCorrect);
+        };
+
+        // Touch 事件支援 (手機/平板 Drag)
+        bindTouchEvents(card, opt.isCorrect);
+
+        container.appendChild(card);
+      });
+    }
+
+    // Touch 拖曳相容處理
+    function bindTouchEvents(elem, isCorrect) {
+      let initialX, initialY;
+
+      elem.ontouchstart = (e) => {
+        const touch = e.touches[0];
+        initialX = touch.clientX - elem.offsetLeft;
+        initialY = touch.clientY - elem.offsetTop;
+        elem.style.position = 'absolute';
+        elem.style.zIndex = '1000';
+      };
+
+      elem.ontouchmove = (e) => {
+        const touch = e.touches[0];
+        elem.style.left = `${touch.clientX - 100}px`;
+        elem.style.top = `${touch.clientY - 50}px`;
+      };
+
+      elem.ontouchend = (e) => {
+        const touch = e.changedTouches[0];
+        const pigTarget = document.getElementById('pigTarget').getBoundingClientRect();
+
+        // 判斷是否放開在小豬範圍內
+        if (
+          touch.clientX >= pigTarget.left &&
+          touch.clientX <= pigTarget.right &&
+          touch.clientY >= pigTarget.top &&
+          touch.clientY <= pigTarget.bottom
+        ) {
+          checkAnswer(isCorrect, elem);
+        } else {
+          // 歸位
+          elem.style.position = 'static';
+        }
+      };
+    }
+
+    // 小豬目標區 Drag & Drop 監聽 (Mouse)
+    const pigTarget = document.getElementById('pigTarget');
+
+    pigTarget.ondragover = (e) => {
+      e.preventDefault();
+      pigTarget.classList.add('drag-over');
+    };
+
+    pigTarget.ondragleave = () => {
+      pigTarget.classList.remove('drag-over');
+    };
+
+    pigTarget.ondrop = (e) => {
+      e.preventDefault();
+      pigTarget.classList.remove('drag-over');
+      if (draggedElement) {
+        const isCorrect = draggedElement.dataset.isCorrect === 'true';
+        checkAnswer(isCorrect, draggedElement);
+      }
+    };
+
+    // 驗證答案與成功特效
+    function checkAnswer(isCorrect, elem) {
+      if (isCorrect) {
+        // 吃對了：特效與音效感
+        const pigFace = document.getElementById('pigFace');
+        const yummyText = document.getElementById('yummyText');
+
+        pigFace.innerText = '😮'; // 張嘴
+        pigFace.classList.add('pig-eating');
+        yummyText.classList.add('show');
+
+        setTimeout(() => {
+          pigFace.innerText = '😋'; // 飽足笑臉
+        }, 300);
+
+        setTimeout(() => {
+          pigFace.innerText = '🐷';
+          pigFace.classList.remove('pig-eating');
+          yummyText.classList.remove('show');
+          currentIdx++;
+          loadQuestion();
+        }, 1200);
+
+      } else {
+        // 答錯：搖頭提示，不扣分重試
+        elem.style.animation = 'shake 0.4s';
+        setTimeout(() => elem.style.animation = '', 400);
+      }
+    }
+
+    // 進入獨立滿版慶祝頁面 (End View)
+    function showEndVictoryPage() {
+      document.getElementById('progressFill').style.width = '100%';
+      switchView('endView');
+      startConfetti();
+    }
+
+    /* --- 全螢幕彩帶煙火特效 (Confetti Effect) --- */
+    function startConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const confettiCount = 150;
+      const confetti = [];
+      const colors = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#2e86de', '#ff9ff3'];
+
+      for (let i = 0; i < confettiCount; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 12 + 8,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          speedY: Math.random() * 5 + 3,
+          speedX: Math.random() * 2 - 1,
+          angle: Math.random() * 360,
+          spin: Math.random() * 0.2 - 0.1
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        confetti.forEach((p) => {
+          p.y += p.speedY;
+          p.x += p.speedX;
+          p.angle += p.spin;
+
+          if (p.y > canvas.height) p.y = -20;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.angle);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+        });
+
+        if (document.getElementById('endView').classList.contains('active-view')) {
+          requestAnimationFrame(render);
+        }
+      }
+      render();
+    }
+  </script>
+</body>
+</html>
