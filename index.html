@@ -1,569 +1,175 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Feed the Piggy - English Game 1</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
-      font-family: 'Fredoka', 'Chalkboard SE', 'Comic Sans MS', sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Word & Math Game - Select Level</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
 
-    body, html {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #fff0f5;
-    }
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background-color: #CBE6FF;
+            background-image: radial-gradient(circle at 50% 50%, #E2F0FF 0%, #BFE0FF 100%);
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Fredoka', cursive, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    /* Page View Controller */
-    .view {
-      display: none;
-      width: 100vw;
-      height: 100vh;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
-    }
+        h1 {
+            color: #2C3E50;
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(255,255,255,0.8);
+        }
 
-    .active-view {
-      display: flex !important;
-    }
+        /* Responsive 3-Column Layout */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1100px;
+            width: 100%;
+        }
 
-    /* Buttons */
-    .btn-large {
-      font-size: 36px;
-      font-weight: bold;
-      padding: 15px 40px;
-      background-color: #ff4757;
-      color: white;
-      border: none;
-      border-radius: 50px;
-      box-shadow: 0 8px 0 #d63031;
-      cursor: pointer;
-      transition: transform 0.1s;
-    }
+        /* Interactive Card Styling */
+        .game-card {
+            background: #FFFFFF;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
 
-    .btn-large:active {
-      transform: translateY(4px);
-      box-shadow: 0 4px 0 #d63031;
-    }
+        .game-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 35px rgba(0, 0, 0, 0.12);
+        }
 
-    /* --- 1. Start View --- */
-    #startView {
-      justify-content: center;
-      gap: 30px;
-      background: linear-gradient(135deg, #ff9ff3, #feca57);
-    }
+        /* Banner Header with Polka Dot Pattern */
+        .card-header {
+            height: 160px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.4) 2px, transparent 2px);
+            background-size: 16px 16px;
+        }
 
-    .title-box {
-      text-align: center;
-      color: white;
-      text-shadow: 3px 3px 0 #ff6b6b;
-    }
+        .card-icon {
+            font-size: 64px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+        }
 
-    .title-box h1 { font-size: 3.5rem; }
-    .title-box p { font-size: 1.5rem; margin-top: 10px; }
+        .hot-badge {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background-color: #FF5252;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 900;
+            box-shadow: 0 3px 6px rgba(255, 82, 82, 0.4);
+        }
 
-    .big-pig-avatar {
-      font-size: 8rem;
-      animation: pulse 1.5s infinite;
-    }
+        .card-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
 
-    /* --- 2. Quiz View --- */
-    #quizView {
-      background-color: #f7d794;
-    }
+        .card-title {
+            font-size: 22px;
+            font-weight: 900;
+            color: #1E293B;
+            margin: 0 0 16px 0;
+            line-height: 1.3;
+        }
 
-    .header-bar {
-      width: 100%;
-      max-width: 600px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
 
-    .progress-container {
-      flex: 1;
-      height: 24px;
-      background-color: rgba(255, 255, 255, 0.6);
-      border-radius: 12px;
-      margin: 0 15px;
-      overflow: hidden;
-      border: 2px solid #574b90;
-    }
+        .tag {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 700;
+        }
 
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background-color: #10ac84;
-      transition: width 0.3s ease;
-    }
+        .tag-blue { background-color: #EEF4FF; color: #4F46E5; }
+        .tag-orange { background-color: #FFF6ED; color: #EA580C; }
 
-    .score-text {
-      font-size: 24px;
-      font-weight: bold;
-      color: #303952;
-    }
-
-    .question-box {
-      text-align: center;
-      background: white;
-      padding: 15px 30px;
-      border-radius: 20px;
-      box-shadow: 0 5px 0 #f5cd79;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .question-text {
-      font-size: 32px;
-      font-weight: bold;
-      color: #303952;
-    }
-
-    .audio-btn {
-      font-size: 28px;
-      background: #78e08f;
-      border: none;
-      border-radius: 50%;
-      width: 45px;
-      height: 45px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Pig Target Zone */
-    .pig-target-zone {
-      width: 220px;
-      height: 220px;
-      background-color: #f8a5c2;
-      border: 6px dashed #f78fb3;
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      transition: transform 0.2s;
-    }
-
-    .pig-target-zone.drag-over {
-      transform: scale(1.15);
-      background-color: #f78fb3;
-    }
-
-    .pig-face {
-      font-size: 6.5rem;
-      transition: all 0.2s;
-    }
-
-    .pig-eating {
-      transform: scale(1.2);
-    }
-
-    .yummy-text {
-      position: absolute;
-      top: -40px;
-      font-size: 48px;
-      font-weight: bold;
-      color: #ff4757;
-      opacity: 0;
-      transition: all 0.3s ease-out;
-      text-shadow: 2px 2px white;
-    }
-
-    .yummy-text.show {
-      opacity: 1;
-      transform: translateY(-20px) scale(1.2);
-    }
-
-    /* Options Container (42px Font Size) */
-    .options-container {
-      display: flex;
-      gap: 30px;
-      margin-bottom: 20px;
-      position: relative;
-      min-height: 110px;
-    }
-
-    .option-card {
-      min-width: 160px;
-      height: 100px;
-      background-color: #ffffff;
-      border: 4px solid #54a0ff;
-      border-radius: 24px;
-      box-shadow: 0 8px 0 #2e86de;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 42px;
-      font-weight: bold;
-      color: #2c3e50;
-      cursor: grab;
-      touch-action: none;
-    }
-
-    .option-card:active {
-      cursor: grabbing;
-    }
-
-    /* --- 3. End View --- */
-    #endView {
-      background: linear-gradient(180deg, #ff9ff3 0%, #54a0ff 100%);
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      z-index: 2;
-    }
-
-    #confettiCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 3;
-    }
-
-    .victory-content {
-      z-index: 4;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .giant-trophy {
-      font-size: 9rem;
-      animation: trophyFloat 2s infinite ease-in-out;
-      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
-    }
-
-    .victory-title {
-      font-size: 3.5rem;
-      color: #fff200;
-      text-shadow: 4px 4px 0 #ff3838;
-      margin: 10px 0;
-    }
-
-    .final-score-box {
-      font-size: 2.2rem;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 10px 30px;
-      border-radius: 30px;
-      color: #2c3e50;
-      font-weight: bold;
-      margin-bottom: 25px;
-    }
-
-    .end-buttons {
-      display: flex;
-      gap: 20px;
-      z-index: 4;
-    }
-
-    .btn-home {
-      background-color: #10ac84;
-      box-shadow: 0 8px 0 #0f9675;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.08); }
-    }
-
-    @keyframes trophyFloat {
-      0%, 100% { transform: translateY(0) rotate(-3deg); }
-      50% { transform: translateY(-15px) rotate(3deg); }
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-12px); }
-      40%, 80% { transform: translateX(12px); }
-    }
-  </style>
+        .card-desc {
+            font-size: 13px;
+            color: #64748B;
+            line-height: 1.5;
+            margin-top: auto;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- 1. Start View -->
-  <div id="startView" class="view active-view">
-    <div class="title-box">
-      <h1>🐷 Feed the Piggy 🍌</h1>
-      <p>Help answer the questions to feed piggy!</p>
-    </div>
-    <div class="big-pig-avatar">🐷</div>
-    <button class="btn-large" onclick="startGame()">START</button>
-  </div>
+    <h1>🎮 選擇遊戲關卡 Choose a Game</h1>
 
-  <!-- 2. Game View -->
-  <div id="quizView" class="view">
-    <div class="header-bar">
-      <button onclick="location.href='index.html'" style="font-size: 20px; padding: 5px 15px; border-radius: 10px; border:none; cursor:pointer;">🏠 Home</button>
-      <div class="progress-container">
-        <div id="progressFill" class="progress-fill"></div>
-      </div>
-      <div class="score-text"><span id="currentStep">1</span>/10</div>
+    <div class="game-grid" id="gameGrid">
+        <!-- Cards generated dynamically from data.json -->
     </div>
 
-    <div class="question-box">
-      <div id="questionText" class="question-text">Loading question...</div>
-      <button class="audio-btn" onclick="speakQuestion()">🔊</button>
-    </div>
+    <script>
+        fetch('./data.json')
+            .then(res => {
+                if (!res.ok) throw new Error("Failed to load data.json");
+                return res.json();
+            })
+            .then(data => {
+                const grid = document.getElementById('gameGrid');
+                grid.innerHTML = '';
 
-    <!-- Pig Target Zone -->
-    <div id="pigTarget" class="pig-target-zone">
-      <div id="yummyText" class="yummy-text">YUMMY! 🎉</div>
-      <div id="pigFace" class="pig-face">🐷</div>
-      <div style="font-size: 16px; color: #666; font-weight: bold;">Feed Me!</div>
-    </div>
+                data.games.forEach(game => {
+                    const card = document.createElement('a');
+                    card.className = 'game-card';
+                    card.href = `./game.html?game=${game.game_id}`;
 
-    <!-- Option Cards -->
-    <div class="options-container" id="optionsContainer"></div>
-  </div>
+                    const tagsHtml = game.tags ? game.tags.map((tag, idx) => 
+                        `<span class="tag ${idx % 2 === 0 ? 'tag-blue' : 'tag-orange'}">${tag}</span>`
+                    ).join('') : '';
 
-  <!-- 3. Victory Screen -->
-  <div id="endView" class="view">
-    <canvas id="confettiCanvas"></canvas>
-    <div class="victory-content">
-      <div class="giant-trophy">🏆</div>
-      <div style="font-size: 4rem;">🐷✨</div>
-      <h1 class="victory-title">GREAT JOB!</h1>
-      <div class="final-score-box">Piggy is full and happy!</div>
-      <div class="end-buttons">
-        <button class="btn-large" onclick="startGame()">Play Again 🔄</button>
-        <button class="btn-large btn-home" onclick="location.href='index.html'">Home 🏠</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Game 1: English Question Bank (No Zhuyin / Pinyin)
-    const questionsBank = [
-      { q: "Piggy wants a yellow fruit!", prompt: "Banana", correct: "🍌", wrong: "🍎" },
-      { q: "Which one is a sweet doughnut?", prompt: "Doughnut", correct: "🍩", wrong: "📐" },
-      { q: "Which one is bunny's favorite?", prompt: "Carrot", correct: "🥕", wrong: "🍇" },
-      { q: "Which one is cold ice cream?", prompt: "Ice Cream", correct: "🍦", wrong: "🍞" },
-      { q: "Piggy wants fresh milk!", prompt: "Milk", correct: "🥛", wrong: "🥤" },
-      { q: "Which one is a red strawberry?", prompt: "Strawberry", correct: "🍓", wrong: "🍉" },
-      { q: "Which one is a big watermelon?", prompt: "Watermelon", correct: "🍉", wrong: "🍍" },
-      { q: "Piggy wants yummy bread!", prompt: "Bread", correct: "🍞", wrong: "🍕" },
-      { q: "Which one is a crunchy red apple?", prompt: "Apple", correct: "🍎", wrong: "🍋" },
-      { q: "Which one is a bunch of grapes?", prompt: "Grapes", correct: "🍇", wrong: "🍒" }
-    ];
-
-    let currentIdx = 0;
-    let draggedElement = null;
-
-    // TTS: English Voice
-    function speakQuestion() {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const q = questionsBank[currentIdx];
-        const msg = new SpeechSynthesisUtterance(q.q);
-        msg.lang = 'en-US';
-        msg.rate = 0.9;
-        window.speechSynthesis.speak(msg);
-      }
-    }
-
-    function switchView(viewId) {
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
-      document.getElementById(viewId).classList.add('active-view');
-    }
-
-    function startGame() {
-      currentIdx = 0;
-      switchView('quizView');
-      loadQuestion();
-    }
-
-    function loadQuestion() {
-      if (currentIdx >= 10) {
-        showEndVictoryPage();
-        return;
-      }
-
-      document.getElementById('currentStep').innerText = currentIdx + 1;
-      document.getElementById('progressFill').style.width = `${((currentIdx) / 10) * 100}%`;
-
-      const q = questionsBank[currentIdx];
-      document.getElementById('questionText').innerHTML = `${q.q} <br><span style="font-size:20px; color:#e67e22;">(${q.prompt})</span>`;
-      
-      speakQuestion();
-
-      const options = [
-        { text: q.correct, isCorrect: true },
-        { text: q.wrong, isCorrect: false }
-      ].sort(() => Math.random() - 0.5);
-
-      const container = document.getElementById('optionsContainer');
-      container.innerHTML = '';
-
-      options.forEach((opt) => {
-        const card = document.createElement('div');
-        card.className = 'option-card';
-        card.innerText = opt.text;
-        card.draggable = true;
-        card.dataset.isCorrect = opt.isCorrect;
-
-        card.onclick = () => checkAnswer(opt.isCorrect, card);
-
-        card.ondragstart = (e) => {
-          draggedElement = card;
-          e.dataTransfer.setData('text/plain', opt.isCorrect);
-        };
-
-        bindTouchEvents(card, opt.isCorrect);
-        container.appendChild(card);
-      });
-    }
-
-    function bindTouchEvents(elem, isCorrect) {
-      elem.ontouchstart = (e) => {
-        const touch = e.touches[0];
-        elem.style.position = 'fixed';
-        elem.style.zIndex = '1000';
-        elem.style.left = `${touch.clientX - 80}px`;
-        elem.style.top = `${touch.clientY - 50}px`;
-      };
-
-      elem.ontouchmove = (e) => {
-        const touch = e.touches[0];
-        elem.style.left = `${touch.clientX - 80}px`;
-        elem.style.top = `${touch.clientY - 50}px`;
-      };
-
-      elem.ontouchend = (e) => {
-        const touch = e.changedTouches[0];
-        const pigTarget = document.getElementById('pigTarget').getBoundingClientRect();
-
-        elem.style.position = 'static';
-        elem.style.zIndex = 'auto';
-
-        if (
-          touch.clientX >= pigTarget.left &&
-          touch.clientX <= pigTarget.right &&
-          touch.clientY >= pigTarget.top &&
-          touch.clientY <= pigTarget.bottom
-        ) {
-          checkAnswer(isCorrect, elem);
-        }
-      };
-    }
-
-    const pigTarget = document.getElementById('pigTarget');
-
-    pigTarget.ondragover = (e) => {
-      e.preventDefault();
-      pigTarget.classList.add('drag-over');
-    };
-
-    pigTarget.ondragleave = () => {
-      pigTarget.classList.remove('drag-over');
-    };
-
-    pigTarget.ondrop = (e) => {
-      e.preventDefault();
-      pigTarget.classList.remove('drag-over');
-      if (draggedElement) {
-        const isCorrect = draggedElement.dataset.isCorrect === 'true';
-        checkAnswer(isCorrect, draggedElement);
-      }
-    };
-
-    function checkAnswer(isCorrect, elem) {
-      if (isCorrect) {
-        const pigFace = document.getElementById('pigFace');
-        const yummyText = document.getElementById('yummyText');
-
-        pigFace.innerText = '😮';
-        pigFace.classList.add('pig-eating');
-        yummyText.classList.add('show');
-
-        setTimeout(() => { pigFace.innerText = '😋'; }, 300);
-
-        setTimeout(() => {
-          pigFace.innerText = '🐷';
-          pigFace.classList.remove('pig-eating');
-          yummyText.classList.remove('show');
-          currentIdx++;
-          loadQuestion();
-        }, 1200);
-
-      } else {
-        elem.style.animation = 'shake 0.4s';
-        setTimeout(() => elem.style.animation = '', 400);
-      }
-    }
-
-    function showEndVictoryPage() {
-      document.getElementById('progressFill').style.width = '100%';
-      switchView('endView');
-      startConfetti();
-    }
-
-    function startConfetti() {
-      const canvas = document.getElementById('confettiCanvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      const confettiCount = 150;
-      const confetti = [];
-      const colors = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#2e86de', '#ff9ff3'];
-
-      for (let i = 0; i < confettiCount; i++) {
-        confetti.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height - canvas.height,
-          size: Math.random() * 12 + 8,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          speedY: Math.random() * 5 + 3,
-          speedX: Math.random() * 2 - 1,
-          angle: Math.random() * 360,
-          spin: Math.random() * 0.2 - 0.1
-        });
-      }
-
-      function render() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        confetti.forEach((p) => {
-          p.y += p.speedY;
-          p.x += p.speedX;
-          p.angle += p.spin;
-
-          if (p.y > canvas.height) p.y = -20;
-
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.angle);
-          ctx.fillStyle = p.color;
-          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-          ctx.restore();
-        });
-
-        if (document.getElementById('endView').classList.contains('active-view')) {
-          requestAnimationFrame(render);
-        }
-      }
-      render();
-    }
-  </script>
+                    card.innerHTML = `
+                        <div class="card-header" style="background-color: ${game.themeColor || '#9C82FA'};">
+                            ${game.isHot ? '<span class="hot-badge">Hot</span>' : ''}
+                            <div class="card-icon">${game.icon || '🎮'}</div>
+                        </div>
+                        <div class="card-body">
+                            <h2 class="card-title">${game.name}</h2>
+                            <div class="tag-container">${tagsHtml}</div>
+                            <div class="card-desc">${game.description || ''}</div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            })
+            .catch(err => console.error("Data loading error:", err));
+    </script>
 </body>
 </html>
