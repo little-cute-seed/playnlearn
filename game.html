@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>顏色小火車 / 餵食小屁豬</title>
+  <title>顏色小火車</title>
   <style>
     * {
       box-sizing: border-box;
@@ -18,7 +18,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #fff0f5;
+      background-color: #fbdc8d;
     }
 
     /* Page View Controller */
@@ -75,23 +75,31 @@
     .title-box h1 { font-size: 3.5rem; }
     .title-box p { font-size: 1.5rem; margin-top: 10px; }
 
-    .big-pig-avatar {
+    .big-train-avatar {
       font-size: 8rem;
       animation: pulse 1.5s infinite;
     }
 
     /* --- 2. Quiz View --- */
     #quizView {
-      background-color: #f7d794;
+      background-color: #fbdc8d;
+      justify-content: space-around;
     }
 
     .header-bar {
       width: 100%;
       max-width: 600px;
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .top-row {
+      width: 100%;
+      display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
     }
 
     .header-title {
@@ -101,13 +109,25 @@
       white-space: nowrap;
     }
 
+    /* Train Display Above Progress Bar */
+    .train-display {
+      font-size: 32px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      padding-left: 5px;
+      letter-spacing: -2px;
+      transition: all 0.3s ease;
+    }
+
     /* Pink Progress Bar */
     .progress-container {
-      flex: 1;
+      width: 100%;
       height: 22px;
       background-color: #ffffff;
       border-radius: 12px;
-      margin: 0 12px;
       overflow: hidden;
       border: 3px solid #f8a5c2;
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
@@ -131,94 +151,98 @@
       cursor: pointer;
     }
 
-    /* Vocab / Sentence Question Box */
+    /* Sentence Question & Drop Target Box */
     .question-box {
       text-align: center;
       background: white;
-      padding: 20px 30px;
-      border-radius: 24px;
-      box-shadow: 0 6px 0 #f5cd79;
+      padding: 30px 25px;
+      border-radius: 30px;
+      box-shadow: 0 8px 0 #f5cd79;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 15px;
+      justify-content: space-between;
       width: 90%;
-      max-width: 500px;
-      margin: 10px 0;
+      max-width: 550px;
+      margin: 20px 0;
+      position: relative;
     }
 
-    .question-emoji {
-      font-size: 42px;
-      line-height: 1;
-    }
-
-    .vocab-text {
+    .sentence-container {
+      flex: 1;
       font-size: 32px;
       font-weight: 800;
       color: #2c3e50;
       letter-spacing: 1px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* Target Drop Box for "_____" */
+    .drop-blank {
+      display: inline-block;
+      min-width: 140px;
+      height: 55px;
+      border-bottom: 4px solid #2c3e50;
+      text-align: center;
+      line-height: 50px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #00b894;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      transition: all 0.2s ease;
+      padding: 0 10px;
+    }
+
+    .drop-blank.drag-over {
+      background-color: #d1f2pt;
+      border-bottom-color: #00b894;
+      transform: scale(1.1);
+    }
+
+    .drop-blank.correct-filled {
+      background-color: #55efc4;
+      color: white;
+      border-bottom-color: #00b894;
     }
 
     .audio-btn {
       font-size: 24px;
-      background: #78e08f;
+      background: #55efc4;
       border: none;
       border-radius: 50%;
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 0 #b8e994;
+      box-shadow: 0 4px 0 #00b894;
       flex-shrink: 0;
+      margin-left: 10px;
     }
 
-    /* Piggy Target Zone */
-    .pig-target-zone {
-      width: 180px;
-      height: 180px;
-      background-color: #f8a5c2;
-      border: 5px dashed #f78fb3;
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      transition: transform 0.2s;
-      margin: 10px 0;
-    }
-
-    .pig-target-zone.drag-over {
-      transform: scale(1.15);
-      background-color: #f78fb3;
-    }
-
-    .pig-face {
-      font-size: 5.5rem;
-      transition: all 0.2s;
-    }
-
-    .pig-eating {
-      transform: scale(1.2);
-    }
-
-    /* Success Text "Yeah!" */
+    /* Success Pop Text "Yeah!" */
     .yummy-text {
       position: absolute;
-      top: -35px;
+      top: -45px;
+      left: 50%;
+      transform: translateX(-50%);
       font-size: 44px;
       font-weight: 900;
       color: #ff4757;
       opacity: 0;
       transition: all 0.3s ease-out;
       text-shadow: 2px 2px white, 0 0 10px rgba(255, 71, 87, 0.4);
+      pointer-events: none;
     }
 
     .yummy-text.show {
       opacity: 1;
-      transform: translateY(-15px) scale(1.2);
+      transform: translateX(-50%) translateY(-10px) scale(1.2);
     }
 
     /* 3 Choice Cards */
@@ -227,16 +251,15 @@
       justify-content: center;
       gap: 15px;
       width: 100%;
-      max-width: 500px;
-      margin-top: 10px;
-      margin-bottom: 20px;
+      max-width: 550px;
+      margin-bottom: 30px;
       min-height: 100px;
     }
 
     .option-card {
       flex: 1;
-      max-width: 140px;
-      height: 95px;
+      max-width: 150px;
+      height: 75px;
       background-color: #ffffff;
       border: 4px solid #54a0ff;
       border-radius: 20px;
@@ -244,7 +267,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: bold;
       color: #2c3e50;
       cursor: pointer;
@@ -340,35 +363,41 @@
   <!-- 1. Start View -->
   <div id="startView" class="view active-view">
     <div class="title-box">
-      <h1>🚂 顏色小火車 🐷</h1>
-      <p>Tap or drag the answer to feed piggy!</p>
+      <h1>🚂 顏色小火車 🚋</h1>
+      <p>Drag or tap the answer into the blank!</p>
     </div>
-    <div class="big-pig-avatar">🐷</div>
+    <div class="big-train-avatar">🚂</div>
     <button class="btn-large" onclick="startGame()">START</button>
   </div>
 
   <!-- 2. Game View -->
   <div id="quizView" class="view">
-    <!-- Header -->
+    <!-- Header with Train & Progress Bar -->
     <div class="header-bar">
-      <button class="home-btn" onclick="location.href='index.html'">🏠 Home</button>
+      <div class="top-row">
+        <button class="home-btn" onclick="location.href='index.html'">🏠 Home</button>
+        <div id="headerTitle" class="header-title">顏色小火車 (1/5)</div>
+      </div>
+      
+      <!-- Train track adding emoji trains/carriages -->
+      <div id="trainDisplay" class="train-display"></div>
+
       <div class="progress-container">
         <div id="progressFill" class="progress-fill"></div>
       </div>
-      <div id="headerTitle" class="header-title">顏色小火車 (1/5)</div>
     </div>
 
-    <!-- Question Box -->
+    <!-- Question Box (Target Blank Integrated Inside) -->
     <div class="question-box">
-      <div id="questionEmoji" class="question-emoji">🐻</div>
-      <div id="sentenceText" class="vocab-text">The bear is _____.</div>
-      <button class="audio-btn" onclick="speakQuestion()">🔊</button>
-    </div>
-
-    <!-- Piggy Target Zone -->
-    <div id="pigTarget" class="pig-target-zone">
       <div id="yummyText" class="yummy-text">Yeah! 🎉</div>
-      <div id="pigFace" class="pig-face">🐷</div>
+      
+      <div class="sentence-container">
+        <span id="sentencePrefix">The bear is</span>
+        <div id="dropBlank" class="drop-blank">_______</div>
+        <span id="sentenceSuffix">.</span>
+      </div>
+
+      <button class="audio-btn" onclick="speakQuestion()">🔊</button>
     </div>
 
     <!-- 3 Choice Cards -->
@@ -380,9 +409,9 @@
     <canvas id="confettiCanvas"></canvas>
     <div class="victory-content">
       <div class="giant-trophy">🏆</div>
-      <div style="font-size: 3.5rem;">🐷✨</div>
+      <div style="font-size: 3.5rem;">🚂🚋🚋🚋✨</div>
       <h1 class="victory-title">GREAT JOB!</h1>
-      <div class="final-score-box">小屁豬吃飽了！</div>
+      <div class="final-score-box">小火車出發囉！</div>
       <div class="end-buttons">
         <button class="btn-large" onclick="startGame()">Play Again 🔄</button>
         <button class="btn-large btn-home" onclick="location.href='index.html'">Home 🏠</button>
@@ -391,40 +420,39 @@
   </div>
 
   <script>
-    // Merged Question Bank featuring sentence support + options
     const questionsBank = [
       {
-        image: "🐻",
+        prefix: "The bear is",
+        suffix: ".",
         sentence: "The bear is BROWN.",
-        displaySentence: "The bear is _____.",
         word: "BROWN",
         options: ["BROWN", "RED", "BLUE"]
       },
       {
-        image: "🍌",
+        prefix: "The banana is",
+        suffix: ".",
         sentence: "The banana is YELLOW.",
-        displaySentence: "The banana is _____.",
         word: "YELLOW",
         options: ["YELLOW", "GREEN", "PURPLE"]
       },
       {
-        image: "🍎",
+        prefix: "The apple is",
+        suffix: ".",
         sentence: "The apple is RED.",
-        displaySentence: "The apple is _____.",
         word: "RED",
         options: ["RED", "ORANGE", "BLUE"]
       },
       {
-        image: "🐸",
+        prefix: "The frog is",
+        suffix: ".",
         sentence: "The frog is GREEN.",
-        displaySentence: "The frog is _____.",
         word: "GREEN",
         options: ["GREEN", "PINK", "BLACK"]
       },
       {
-        image: "🍇",
+        prefix: "The grapes are",
+        suffix: ".",
         sentence: "The grapes are PURPLE.",
-        displaySentence: "The grapes are _____.",
         word: "PURPLE",
         options: ["PURPLE", "YELLOW", "WHITE"]
       }
@@ -432,8 +460,8 @@
 
     let currentIdx = 0;
     let draggedElement = null;
+    let trainString = ""; // Stores train emoji 🚂 and trucks 🚋
 
-    // Speaks the FULL sentence aloud (e.g., "The bear is BROWN.")
     function speakQuestion() {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
@@ -452,35 +480,40 @@
 
     function startGame() {
       currentIdx = 0;
+      trainString = "";
+      document.getElementById('trainDisplay').innerText = trainString;
       switchView('quizView');
       loadQuestion();
     }
 
-    // Loads question: Displays sentence with blank underscores and renders options
     function loadQuestion() {
       if (currentIdx >= questionsBank.length) {
         showEndVictoryPage();
         return;
       }
 
-      // Update Progress / Header
+      // Update Header Title & Progress Fill Bar
       document.getElementById('headerTitle').innerText = `顏色小火車 (${currentIdx + 1}/${questionsBank.length})`;
-      document.getElementById('progressFill').style.width = `${((currentIdx) / questionsBank.length) * 100}%`;
+      document.getElementById('progressFill').style.width = `${(currentIdx / questionsBank.length) * 100}%`;
 
       const q = questionsBank[currentIdx];
 
-      // Display image & sentence with blank underscores
-      document.getElementById('questionEmoji').innerText = q.image;
-      document.getElementById('sentenceText').innerText = q.displaySentence;
+      // Reset Drop Target Blank Box
+      const dropBlank = document.getElementById('dropBlank');
+      dropBlank.innerText = "_______";
+      dropBlank.className = "drop-blank";
 
-      // Read aloud full sentence
+      // Setup sentence parts
+      document.getElementById('sentencePrefix').innerText = q.prefix;
+      document.getElementById('sentenceSuffix').innerText = q.suffix;
+
+      // Speak aloud full sentence
       speakQuestion();
 
-      // Render Option Cards
+      // Setup Options
       const container = document.getElementById('optionsContainer');
       container.innerHTML = '';
 
-      // Shuffle options
       const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
 
       shuffledOptions.forEach((optText) => {
@@ -490,24 +523,23 @@
         const isCorrect = (optText === q.word);
         card.dataset.isCorrect = isCorrect;
 
-        // Supports Tap / Press
         card.onclick = () => checkAnswer(isCorrect, card);
 
-        // Drag support
+        // Drag events
         card.draggable = true;
         card.ondragstart = (e) => {
           draggedElement = card;
           e.dataTransfer.setData('text/plain', isCorrect);
         };
 
-        // Mobile touch support (tap & drag)
         bindTouchEvents(card, isCorrect);
-
         container.appendChild(card);
       });
+
+      setupDropZone();
     }
 
-    // Touch Event Handler supporting BOTH Drag and Press/Tap
+    // Touch Event Handling (Drag + Tap Support for Mobile)
     function bindTouchEvents(elem, isCorrect) {
       let startX = 0, startY = 0;
       let isDragging = false;
@@ -529,13 +561,13 @@
           elem.style.position = 'fixed';
           elem.style.zIndex = '1000';
           elem.style.left = `${touch.clientX - 60}px`;
-          elem.style.top = `${touch.clientY - 45}px`;
+          elem.style.top = `${touch.clientY - 35}px`;
         }
       };
 
       elem.ontouchend = (e) => {
         const touch = e.changedTouches[0];
-        const pigTarget = document.getElementById('pigTarget').getBoundingClientRect();
+        const dropTarget = document.getElementById('dropBlank').getBoundingClientRect();
 
         elem.style.position = 'static';
         elem.style.zIndex = 'auto';
@@ -544,10 +576,10 @@
           checkAnswer(isCorrect, elem);
         } else {
           if (
-            touch.clientX >= pigTarget.left &&
-            touch.clientX <= pigTarget.right &&
-            touch.clientY >= pigTarget.top &&
-            touch.clientY <= pigTarget.bottom
+            touch.clientX >= dropTarget.left &&
+            touch.clientX <= dropTarget.right &&
+            touch.clientY >= dropTarget.top &&
+            touch.clientY <= dropTarget.bottom
           ) {
             checkAnswer(isCorrect, elem);
           }
@@ -555,41 +587,50 @@
       };
     }
 
-    // Target Drag Listeners
-    const pigTarget = document.getElementById('pigTarget');
+    // Setup "_____" Blank as Drag Target Zone
+    function setupDropZone() {
+      const dropBlank = document.getElementById('dropBlank');
 
-    pigTarget.ondragover = (e) => {
-      e.preventDefault();
-      pigTarget.classList.add('drag-over');
-    };
+      dropBlank.ondragover = (e) => {
+        e.preventDefault();
+        dropBlank.classList.add('drag-over');
+      };
 
-    pigTarget.ondragleave = () => {
-      pigTarget.classList.remove('drag-over');
-    };
+      dropBlank.ondragleave = () => {
+        dropBlank.classList.remove('drag-over');
+      };
 
-    pigTarget.ondrop = (e) => {
-      e.preventDefault();
-      pigTarget.classList.remove('drag-over');
-      if (draggedElement) {
-        const isCorrect = draggedElement.dataset.isCorrect === 'true';
-        checkAnswer(isCorrect, draggedElement);
-      }
-    };
+      dropBlank.ondrop = (e) => {
+        e.preventDefault();
+        dropBlank.classList.remove('drag-over');
+        if (draggedElement) {
+          const isCorrect = draggedElement.dataset.isCorrect === 'true';
+          checkAnswer(isCorrect, draggedElement);
+        }
+      };
+    }
 
     function checkAnswer(isCorrect, elem) {
-      if (isCorrect) {
-        const pigFace = document.getElementById('pigFace');
-        const yummyText = document.getElementById('yummyText');
+      const dropBlank = document.getElementById('dropBlank');
 
-        pigFace.innerText = '😮';
-        pigFace.classList.add('pig-eating');
+      if (isCorrect) {
+        // Fill the blank target
+        dropBlank.innerText = elem.innerText;
+        dropBlank.classList.add('correct-filled');
+
+        // Show "Yeah!" text animation
+        const yummyText = document.getElementById('yummyText');
         yummyText.classList.add('show');
 
-        setTimeout(() => { pigFace.innerText = '😋'; }, 300);
+        // Train display Logic: 🚂 for Q1, 🚋 added to right for Q2+
+        if (currentIdx === 0) {
+          trainString = "🚂";
+        } else {
+          trainString += "🚋";
+        }
+        document.getElementById('trainDisplay').innerText = trainString;
 
         setTimeout(() => {
-          pigFace.innerText = '🐷';
-          pigFace.classList.remove('pig-eating');
           yummyText.classList.remove('show');
           currentIdx++;
           loadQuestion();
